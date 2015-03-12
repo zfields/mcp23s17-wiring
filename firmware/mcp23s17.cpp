@@ -5,7 +5,7 @@
 mcp23s17::mcp23s17 (
 	const HardwareAddress hw_addr_
 ) :
-	_hw_addr(static_cast<HardwareAddress>(0))
+	_hw_addr(hw_addr_)
 {
 	return;
 }

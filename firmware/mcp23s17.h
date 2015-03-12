@@ -23,7 +23,7 @@ class mcp23s17 {
 	};
 	
 	// Constructor and destructor method(s)
-
+	
 	/// \brief Object Constructor
 	/// \param [in] hw_addr_ The hardware address of the device
 	mcp23s17 (const HardwareAddress hw_addr_);

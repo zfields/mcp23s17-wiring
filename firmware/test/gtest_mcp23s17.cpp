@@ -4,6 +4,7 @@
 #include "gmock/gmock.h"
 
 #include "../mcp23s17.h"
+
 /*
 template <typename return_code_t>
 class TC_Untitled : public TC_Untitled<return_code_t> {
