@@ -1,5 +1,9 @@
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */
 
+#if defined(TESTING)
+#ifndef MOCK_SPI
+#define MOCK_SPI
+
 #include <cstdint>
 #include <functional>
 
@@ -87,5 +91,8 @@ struct MOCK_spi {
 };
 
 extern MOCK_spi SPI;
+
+#endif
+#endif
 
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */
