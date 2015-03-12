@@ -34,6 +34,7 @@ TEST_DIR = .
 CPPFLAGS += -isystem $(GTEST_DIR)/include \
             -isystem $(GMOCK_DIR)/include \
             -std=c++11 \
+            -DTESTING \
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g \
@@ -45,6 +46,7 @@ CXXFLAGS += -g \
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
 UNDER_TEST = mcp23s17
+MOCK_SPI = MOCK_spi
 
 # All Google Test headers. Usually you shouldn't change this
 # definition.
@@ -108,8 +110,14 @@ gmock_main.a : gmock-all.o gtest-all.o gmock_main.o
 # function.  It's fine if your test only uses features from Google
 # Test (and not Google Mock).
 
+$(MOCK_SPI).o : $(TEST_DIR)/$(MOCK_SPI).cpp \
+                $(TEST_DIR)/$(MOCK_SPI).h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
+    -c $(TEST_DIR)/$(MOCK_SPI).cpp
+
 $(UNDER_TEST).o : $(CODE_DIR)/$(UNDER_TEST).cpp \
-                  $(CODE_DIR)/$(UNDER_TEST).h
+                  $(CODE_DIR)/$(UNDER_TEST).h \
+                  $(TEST_DIR)/$(MOCK_SPI).h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
     -c $(CODE_DIR)/$(UNDER_TEST).cpp
 
