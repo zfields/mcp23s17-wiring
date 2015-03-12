@@ -3,6 +3,8 @@
 #ifndef MCP23S17_H
 #define MCP23S17_H
 
+#include <cstdint>
+
 class mcp23s17 {
   public:
 	// Definition(s)
@@ -33,11 +35,11 @@ class mcp23s17 {
 	/// \brief Hardware address of device
 	/// \return Hardware address of the device
 	inline
-	HardwareAddress
-	getHardwareAddress (
+	uint8_t
+	getSpiBusAddress (
 		void
 	) const {
-		return _hw_addr;
+		return _SPI_BUS_ADDRESS;
 	}
 	
 	// Public instance variable(s)
@@ -49,7 +51,7 @@ class mcp23s17 {
 	
   private:
 	// Private instance variable(s)
-	const HardwareAddress _hw_addr;
+	const uint8_t _SPI_BUS_ADDRESS;
 	
 	// Private method(s)
 };

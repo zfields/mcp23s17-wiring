@@ -51,7 +51,7 @@ from different test cases can have the same individual name.
 */
 TEST(Construction, WHENObjectIsConstructedTHENAddressParameterIsStored) {
 	mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
-	ASSERT_EQ(mcp23s17::HW_ADDR_6, gpio_x.getHardwareAddress());
+	ASSERT_EQ(0x4C, gpio_x.getSpiBusAddress());
 }
 
 /*

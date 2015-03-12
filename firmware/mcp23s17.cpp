@@ -15,7 +15,7 @@
 mcp23s17::mcp23s17 (
 	const HardwareAddress hw_addr_
 ) :
-	_hw_addr(hw_addr_)
+	_SPI_BUS_ADDRESS(0x40 | (hw_addr_ << 1))
 {
 	return;
 }
