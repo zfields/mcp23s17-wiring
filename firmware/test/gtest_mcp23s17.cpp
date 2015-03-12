@@ -5,21 +5,17 @@
 
 #include "../mcp23s17.h"
 
-/*
-template <typename return_code_t>
-class TC_Untitled : public TC_Untitled<return_code_t> {
+class TC_mcp23s17 : public mcp23s17 {
   public:
-	TC_Untitled (
-		unsigned char i_parameter_
-	): Untitled<return_code_t>(i_parameter_)
+	TC_mcp23s17 (
+		mcp23s17::HardwareAddress hw_addr_
+	): mcp23s17(hw_addr_)
 	{}
 	
 	// Access protected test members
-	using Untitled<return_code_t>::STATIC_CONST_MEMBER_VARIABLE;
-	using Untitled<return_code_t>::_member_variable;	
-	using Untitled<return_code_t>::memberMethod;
+	using mcp23s17::getControlRegisterAddresses;
 };
-*/
+
 namespace {
 /*
 class ScenarioFixture : public ::testing::Test {
@@ -50,8 +46,15 @@ from different test cases can have the same individual name.
 (e.g. ASSERT_EQ(_EXPECTED_, _ACTUAL_))
 */
 TEST(Construction, WHENObjectIsConstructedTHENAddressParameterIsStored) {
-	mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
+	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
 	ASSERT_EQ(0x4C, gpio_x.getSpiBusAddress());
+}
+
+TEST(Construction, WHENObjectIsConstructedTHENControlRegisterAddressesArePopulatedWithBankEqualsZeroValues) {
+	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
+	for ( int i = 0 ; i < mcp23s17::REGISTER_COUNT ; ++i ) {
+		EXPECT_EQ(i, gpio_x.getControlRegisterAddresses()[i]) << "Expected value <" << i << ">!";
+	}
 }
 
 /*

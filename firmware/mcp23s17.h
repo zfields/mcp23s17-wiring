@@ -9,6 +9,35 @@ class mcp23s17 {
   public:
 	// Definition(s)
 	
+	/// \brief Control Registers
+	/// \note IOCONA is equivalent to IOCONB
+	/// \note As addressed when IOCON.BANK = 0
+	enum ControlRegister {
+		IODIRA = 0,
+		IODIRB,
+		IPOLA,
+		IPOLB,
+		GPINTENA,
+		GPINTENB,
+		DEFVALA,
+		DEFVALB,
+		INTCONA,
+		INTCONB,
+		IOCONA,
+		IOCONB,
+		GPPUA,
+		GPPUB,
+		INTFA,
+		INTFB,
+		INTCAPA,
+		INTCAPB,
+		GPIOA,
+		GPIOB,
+		OLATA,
+		OLATB,
+		REGISTER_COUNT,
+	};
+	
 	/// \brief The hardware address of the chip
 	/// \detail The chip has three pins A0, A1 and A2 dedicated
 	/// to supplying an individual address to a chip, which
@@ -48,10 +77,17 @@ class mcp23s17 {
   protected:
 	// Protected instance variable(s)
 	// Protected method(s)
+	uint8_t const * const
+	getControlRegisterAddresses (
+		void
+	) const {
+		return _control_register_address;
+	}
 	
   private:
 	// Private instance variable(s)
 	const uint8_t _SPI_BUS_ADDRESS;
+	uint8_t _control_register_address[REGISTER_COUNT];
 	
 	// Private method(s)
 };
