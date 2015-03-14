@@ -17,6 +17,10 @@ mcp23s17::mcp23s17 (
 ) :
 	_SPI_BUS_ADDRESS(0x40 | (hw_addr_ << 1))
 {
+	for ( int i = 0 ; i < REGISTER_COUNT ; ++i ) {
+		_control_register_address[i] = i;
+	}
+
 	return;
 }
 
