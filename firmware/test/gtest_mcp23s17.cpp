@@ -4,6 +4,7 @@
 #include "gmock/gmock.h"
 
 #include "../mcp23s17.h"
+#include "MOCK_spi.h"
 
 class TC_mcp23s17 : public mcp23s17 {
   public:

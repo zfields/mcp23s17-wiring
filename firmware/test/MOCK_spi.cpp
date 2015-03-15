@@ -2,18 +2,27 @@
 
 #include "MOCK_spi.h"
 
+MOCK_spi SPI;
+
+std::function<void(void)> MOCK_spi::_begin = [](){ _has_begun = true; };
+std::function<void(void)> MOCK_spi::_end = [](){};
+std::function<void(uint8_t)> MOCK_spi::_setBitOrder = [](uint8_t){};
+std::function<void(uint8_t)> MOCK_spi::_setClockDivider = [](uint8_t){};
+std::function<void(uint8_t)> MOCK_spi::_setDataMode = [](uint8_t){};
+std::function<uint8_t(uint8_t)> MOCK_spi::_transfer = [](uint8_t) -> uint8_t { return 0; };
+
 void
 MOCK_spi::begin (
 	void
 ) {
-	return _begin(void);
+	return _begin();
 }
 
 void
 MOCK_spi::end (
 	void
 ) {
-	return _end(void);
+	return _end();
 }
 
 void
@@ -43,7 +52,5 @@ MOCK_spi::transfer (
 ) {
 	return _transfer(data_);
 }
-
-MOCK_spi SPI;
 
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */

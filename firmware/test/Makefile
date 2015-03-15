@@ -122,11 +122,14 @@ $(UNDER_TEST).o : $(CODE_DIR)/$(UNDER_TEST).cpp \
     -c $(CODE_DIR)/$(UNDER_TEST).cpp
 
 $(TEST_SUITE).o : $(TEST_DIR)/$(TEST_SUITE).cpp \
-                  $(CODE_DIR)/$(UNDER_TEST).h
+                  $(CODE_DIR)/$(UNDER_TEST).h \
+                  $(TEST_DIR)/$(MOCK_SPI).h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
     -c $(TEST_DIR)/$(TEST_SUITE).cpp
 
-$(TEST_SUITE) : $(TEST_SUITE).o \
+$(TEST_SUITE) : $(MOCK_SPI).o \
                 $(UNDER_TEST).o \
+                $(TEST_SUITE).o \
                 gmock_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) -lpthread $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
+    -lpthread $^ -o $@

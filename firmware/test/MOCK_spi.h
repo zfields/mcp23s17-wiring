@@ -43,7 +43,7 @@ struct MOCK_spi {
 	static
 	void
 	beginTransaction (
-		SPISettings settings_	
+		SPISettings settings_
 	);
 */	
 	static
@@ -90,9 +90,10 @@ struct MOCK_spi {
 	static std::function<uint8_t(uint8_t)> _transfer;
 };
 
+#endif
+
 extern MOCK_spi SPI;
 
-#endif
 #endif
 
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */
