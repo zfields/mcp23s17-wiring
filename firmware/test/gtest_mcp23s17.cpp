@@ -58,6 +58,11 @@ TEST(Construction, WHENObjectIsConstructedTHENControlRegisterAddressesArePopulat
 	}
 }
 
+TEST(Construction, WHENObjectIsConstructedTHENSPIBeginIsCalled) {
+	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
+	ASSERT_EQ(true, SPI._has_begun);
+}
+
 /*
 Like TEST(), the first argument is the test case name, but for TEST_F()
 this must be the name of the test fixture class.

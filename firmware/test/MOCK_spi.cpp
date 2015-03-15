@@ -10,6 +10,7 @@ std::function<void(uint8_t)> MOCK_spi::_setBitOrder = [](uint8_t){};
 std::function<void(uint8_t)> MOCK_spi::_setClockDivider = [](uint8_t){};
 std::function<void(uint8_t)> MOCK_spi::_setDataMode = [](uint8_t){};
 std::function<uint8_t(uint8_t)> MOCK_spi::_transfer = [](uint8_t) -> uint8_t { return 0; };
+bool MOCK_spi::_has_begun = false;
 
 void
 MOCK_spi::begin (

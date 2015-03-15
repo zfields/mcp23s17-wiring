@@ -88,6 +88,7 @@ struct MOCK_spi {
 	static std::function<void(uint8_t)> _setClockDivider;
 	static std::function<void(uint8_t)> _setDataMode;
 	static std::function<uint8_t(uint8_t)> _transfer;
+	static bool _has_begun;
 };
 
 #endif
