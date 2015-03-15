@@ -14,6 +14,7 @@ class TC_mcp23s17 : public mcp23s17 {
 	{}
 	
 	// Access protected test members
+	using mcp23s17::getControlRegister;
 	using mcp23s17::getControlRegisterAddresses;
 };
 
@@ -55,6 +56,18 @@ TEST(Construction, WHENObjectIsConstructedTHENControlRegisterAddressesArePopulat
 	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
 	for ( int i = 0 ; i < mcp23s17::REGISTER_COUNT ; ++i ) {
 		EXPECT_EQ(i, gpio_x.getControlRegisterAddresses()[i]) << "Expected value <" << i << ">!";
+	}
+}
+
+TEST(Construction, WHENObjectIsConstructedTHENControlRegisterValuesArePopulated) {
+	int i = 0;
+	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
+	
+	for ( ; i < 2 ; ++i ) {
+		EXPECT_EQ(0xFF, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
+	}
+	for ( ; i < mcp23s17::REGISTER_COUNT ; ++i ) {
+		EXPECT_EQ(0x00, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
 	}
 }
 

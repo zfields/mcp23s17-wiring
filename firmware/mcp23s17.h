@@ -77,6 +77,15 @@ class mcp23s17 {
   protected:
 	// Protected instance variable(s)
 	// Protected method(s)
+	inline
+	uint8_t const * const
+	getControlRegister (
+		void
+	) const {
+		return _control_register;
+	}
+	
+	inline
 	uint8_t const * const
 	getControlRegisterAddresses (
 		void
@@ -87,6 +96,7 @@ class mcp23s17 {
   private:
 	// Private instance variable(s)
 	const uint8_t _SPI_BUS_ADDRESS;
+	uint8_t _control_register[REGISTER_COUNT];
 	uint8_t _control_register_address[REGISTER_COUNT];
 	
 	// Private method(s)
