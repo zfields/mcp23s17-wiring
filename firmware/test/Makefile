@@ -46,7 +46,7 @@ CXXFLAGS += -g \
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
 UNDER_TEST = mcp23s17
-MOCK_SPI = MOCK_spi
+MOCK_WIRING = MOCK_wiring
 
 # All Google Test headers. Usually you shouldn't change this
 # definition.
@@ -110,24 +110,24 @@ gmock_main.a : gmock-all.o gtest-all.o gmock_main.o
 # function.  It's fine if your test only uses features from Google
 # Test (and not Google Mock).
 
-$(MOCK_SPI).o : $(TEST_DIR)/$(MOCK_SPI).cpp \
-                $(TEST_DIR)/$(MOCK_SPI).h
+$(MOCK_WIRING).o : $(TEST_DIR)/$(MOCK_WIRING).cpp \
+                $(TEST_DIR)/$(MOCK_WIRING).h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
-    -c $(TEST_DIR)/$(MOCK_SPI).cpp
+    -c $(TEST_DIR)/$(MOCK_WIRING).cpp
 
 $(UNDER_TEST).o : $(CODE_DIR)/$(UNDER_TEST).cpp \
                   $(CODE_DIR)/$(UNDER_TEST).h \
-                  $(TEST_DIR)/$(MOCK_SPI).h
+                  $(TEST_DIR)/$(MOCK_WIRING).h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
     -c $(CODE_DIR)/$(UNDER_TEST).cpp
 
 $(TEST_SUITE).o : $(TEST_DIR)/$(TEST_SUITE).cpp \
                   $(CODE_DIR)/$(UNDER_TEST).h \
-                  $(TEST_DIR)/$(MOCK_SPI).h
+                  $(TEST_DIR)/$(MOCK_WIRING).h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
     -c $(TEST_DIR)/$(TEST_SUITE).cpp
 
-$(TEST_SUITE) : $(MOCK_SPI).o \
+$(TEST_SUITE) : $(MOCK_WIRING).o \
                 $(UNDER_TEST).o \
                 $(TEST_SUITE).o \
                 gmock_main.a

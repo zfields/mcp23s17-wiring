@@ -1,6 +1,6 @@
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */
 
-#include "MOCK_spi.h"
+#include "MOCK_wiring.h"
 
 MOCK_spi SPI;
 
@@ -52,6 +52,19 @@ MOCK_spi::transfer (
 	uint8_t data_
 ) {
 	return _transfer(data_);
+}
+
+void
+initMockState (
+	void
+) {
+	MOCK_spi::_begin = [](){ MOCK_spi::_has_begun = true; };
+	MOCK_spi::_end = [](){};
+	MOCK_spi::_setBitOrder = [](uint8_t){};
+	MOCK_spi::_setClockDivider = [](uint8_t){};
+	MOCK_spi::_setDataMode = [](uint8_t){};
+	MOCK_spi::_transfer = [](uint8_t) -> uint8_t { return 0; };
+	MOCK_spi::_has_begun = false;
 }
 
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */

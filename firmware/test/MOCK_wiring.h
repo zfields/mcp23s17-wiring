@@ -1,8 +1,8 @@
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */
 
 #if defined(TESTING)
-#ifndef MOCK_SPI
-#define MOCK_SPI
+#ifndef MOCK_WIRING
+#define MOCK_WIRING
 
 #include <cstdint>
 #include <functional>
@@ -38,7 +38,7 @@ struct MOCK_spi {
 	void
 	begin (
 		void
-	);
+	);	
 /*	
 	static
 	void
@@ -90,6 +90,11 @@ struct MOCK_spi {
 	static std::function<uint8_t(uint8_t)> _transfer;
 	static bool _has_begun;
 };
+
+void
+initMockState (
+	void
+);
 
 #endif
 

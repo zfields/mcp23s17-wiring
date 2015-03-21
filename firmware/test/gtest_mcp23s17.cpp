@@ -4,18 +4,18 @@
 #include "gmock/gmock.h"
 
 #include "../mcp23s17.h"
-#include "MOCK_spi.h"
+#include "MOCK_wiring.h"
 
 class TC_mcp23s17 : public mcp23s17 {
   public:
-	TC_mcp23s17 (
-		mcp23s17::HardwareAddress hw_addr_
-	): mcp23s17(hw_addr_)
-	{}
-	
-	// Access protected test members
-	using mcp23s17::getControlRegister;
-	using mcp23s17::getControlRegisterAddresses;
+    TC_mcp23s17 (
+        mcp23s17::HardwareAddress hw_addr_
+    ): mcp23s17(hw_addr_)
+    {}
+    
+    // Access protected test members
+    using mcp23s17::getControlRegister;
+    using mcp23s17::getControlRegisterAddresses;
 };
 
 namespace {
@@ -48,32 +48,32 @@ from different test cases can have the same individual name.
 (e.g. ASSERT_EQ(_EXPECTED_, _ACTUAL_))
 */
 TEST(Construction, WHENObjectIsConstructedTHENAddressParameterIsStored) {
-	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
-	ASSERT_EQ(0x4C, gpio_x.getSpiBusAddress());
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    ASSERT_EQ(0x4C, gpio_x.getSpiBusAddress());
 }
 
 TEST(Construction, WHENObjectIsConstructedTHENControlRegisterAddressesArePopulatedWithBankEqualsZeroValues) {
-	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
-	for ( int i = 0 ; i < mcp23s17::REGISTER_COUNT ; ++i ) {
-		EXPECT_EQ(i, gpio_x.getControlRegisterAddresses()[i]) << "Expected value <" << i << ">!";
-	}
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    for ( int i = 0 ; i < static_cast<int>(mcp23s17::ControlRegister::REGISTER_COUNT) ; ++i ) {
+        EXPECT_EQ(i, gpio_x.getControlRegisterAddresses()[i]) << "Expected value <" << i << ">!";
+    }
 }
 
 TEST(Construction, WHENObjectIsConstructedTHENControlRegisterValuesArePopulated) {
-	int i = 0;
-	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
-	
-	for ( ; i < 2 ; ++i ) {
-		EXPECT_EQ(0xFF, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
-	}
-	for ( ; i < mcp23s17::REGISTER_COUNT ; ++i ) {
-		EXPECT_EQ(0x00, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
-	}
+    int i = 0;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    for ( ; i < 2 ; ++i ) {
+        EXPECT_EQ(0xFF, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
+    }
+    for ( ; i < static_cast<int>(mcp23s17::ControlRegister::REGISTER_COUNT) ; ++i ) {
+        EXPECT_EQ(0x00, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
+    }
 }
 
 TEST(Construction, WHENObjectIsConstructedTHENSPIBeginIsCalled) {
-	TC_mcp23s17 gpio_x(mcp23s17::HW_ADDR_6);
-	ASSERT_EQ(true, SPI._has_begun);
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    ASSERT_EQ(true, SPI._has_begun);
 }
 
 /*
@@ -93,8 +93,8 @@ TEST_F(ScenarioFixture, TestName) {
 } // namespace
 /*
 int main (int argc, char *argv[]) {
-	::testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
 */
 /* Created and copyrighted by Zachary J. Fields. All rights reserved. */

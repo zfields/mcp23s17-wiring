@@ -12,7 +12,7 @@ class mcp23s17 {
 	/// \brief Control Registers
 	/// \note IOCONA is equivalent to IOCONB
 	/// \note As addressed when IOCON.BANK = 0
-	enum ControlRegister {
+	enum class ControlRegister {
 		IODIRA = 0,
 		IODIRB,
 		IPOLA,
@@ -42,7 +42,7 @@ class mcp23s17 {
 	/// \detail The chip has three pins A0, A1 and A2 dedicated
 	/// to supplying an individual address to a chip, which
 	/// allows up to eight devices on the bus.
-	enum HardwareAddress {
+	enum class HardwareAddress {
 		HW_ADDR_0 = 0,
 		HW_ADDR_1,
 		HW_ADDR_2,
@@ -57,7 +57,9 @@ class mcp23s17 {
 	
 	/// \brief Object Constructor
 	/// \param [in] hw_addr_ The hardware address of the device
-	mcp23s17 (const HardwareAddress hw_addr_);
+	mcp23s17 (
+		const HardwareAddress hw_addr_
+	);
 	
 	// Accessor method(s)
 	
@@ -96,8 +98,8 @@ class mcp23s17 {
   private:
 	// Private instance variable(s)
 	const uint8_t _SPI_BUS_ADDRESS;
-	uint8_t _control_register[REGISTER_COUNT];
-	uint8_t _control_register_address[REGISTER_COUNT];
+	uint8_t _control_register[static_cast<uint8_t>(ControlRegister::REGISTER_COUNT)];
+	uint8_t _control_register_address[static_cast<uint8_t>(ControlRegister::REGISTER_COUNT)];
 	
 	// Private method(s)
 };
