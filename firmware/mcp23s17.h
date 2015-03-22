@@ -8,6 +8,15 @@
 class mcp23s17 {
   public:
 	// Definition(s)
+	enum class PinMode {
+		OUTPUT = 0,
+		INPUT,
+	};
+	
+	enum class RegisterTransaction {
+		WRITE = 0,
+		READ,
+	};
 	
 	/// \brief Control Registers
 	/// \note IOCONA is equivalent to IOCONB
@@ -75,6 +84,15 @@ class mcp23s17 {
 	
 	// Public instance variable(s)
 	// Public method(s)
+	
+	/// \brief Set pin mode
+	/// \param [in] pin_ The number associated with the pin
+	/// \param [in] mode_ The direction of use INPUT/OUTPUT
+	void
+	pinMode (
+		uint8_t pin_,
+		PinMode mode_
+	);
 	
   protected:
 	// Protected instance variable(s)

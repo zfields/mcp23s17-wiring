@@ -19,26 +19,36 @@ class TC_mcp23s17 : public mcp23s17 {
 };
 
 namespace {
-/*
-class ScenarioFixture : public ::testing::Test {
+
+class SPITransfer : public ::testing::Test {
   protected:
-	TC_Untitled<return_code_t> *tc_untitled;
-	
-	ScenarioFixture() {
-		// This happens before SetUp()
-	}
-	~ScenarioFixture() {
-		// This happens after TearDown()
-	}
-	
-	void SetUp (void) {
-		tc_untitled = new TC_Untitled<return_code_t>(7);
-	}
-	void TearDown (void) {
-		delete(tc_untitled);
-	}
+    uint8_t _spi_transaction[3];
+    int _index;
+    
+    SPITransfer (
+        void
+    ) :
+        _index(0)
+    {
+        // This happens before SetUp()
+    }
+    ~SPITransfer() {
+        // This happens after TearDown()
+    }
+    
+    void SetUp (void) {
+        initMockState();
+        for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = '\0'; }
+        SPI._transfer = [&](uint8_t byte_){
+            _spi_transaction[_index] = byte_;
+            ++_index;
+            return 0x00;
+        };
+    }
+    void TearDown (void) {}
+   
 };
-*/
+
 /*
 The first argument is the name of the test case, and the second argument
 is the test's name within the test case. Both names must be valid C++
@@ -80,16 +90,15 @@ TEST(Construction, WHENObjectIsConstructedTHENSPIBeginIsCalled) {
 Like TEST(), the first argument is the test case name, but for TEST_F()
 this must be the name of the test fixture class.
 */
-/*
-TEST_F(ScenarioFixture, TestName) {
-	const int EXPECTED_VALUE(7);
-	int actual_value(6);
-	
-	EXPECT_EQ(EXPECTED_VALUE, actual_value);
-	EXPECT_TRUE(false);
-	ASSERT_TRUE(true);
+
+TEST_F(SPITransfer, WHENPinModeIsCalledTHENTheProperSPITransactionIsSent) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    EXPECT_EQ(gpio_x.getSpiBusAddress() | static_cast<uint8_t>(mcp23s17::RegisterTransaction::WRITE), _spi_transaction[0]);
+    EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA), _spi_transaction[1]);
+    EXPECT_EQ(0xFB, _spi_transaction[2]);
 }
-*/
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {

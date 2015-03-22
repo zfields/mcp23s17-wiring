@@ -23,4 +23,15 @@ mcp23s17::mcp23s17 (
 	return;
 }
 
+void
+mcp23s17::pinMode (
+	uint8_t pin_,
+	PinMode mode_
+) {
+	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+	SPI.transfer(static_cast<uint8_t>(ControlRegister::IODIRA));
+	SPI.transfer(0xFB);
+	return;
+}
+
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */
