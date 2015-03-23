@@ -4,6 +4,8 @@
 
 MOCK_spi SPI;
 
+const size_t ARDUINO_PINS = 14;
+
 bool MOCK_spi::_has_begun = false;
 
 std::function<void(void)> MOCK_spi::_begin = [](){ _has_begun = true; };
@@ -55,6 +57,10 @@ MOCK_spi::transfer (
 	return _transfer(data_);
 }
 
+namespace {
+	static uint8_t _pin_latch_value[ARDUINO_PINS] = { 0 };
+}
+
 void
 initMockState (
 	void
@@ -70,6 +76,13 @@ initMockState (
 	MOCK_spi::_setClockDivider = [](uint8_t){};
 	MOCK_spi::_setDataMode = [](uint8_t){};
 	MOCK_spi::_transfer = [](uint8_t) -> uint8_t { return 0; };
+}
+
+uint8_t
+getPinLatchValue (
+	const uint8_t pin_
+) {
+	return _pin_latch_value[pin_];
 }
 
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */

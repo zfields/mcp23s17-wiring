@@ -91,6 +91,11 @@ Like TEST(), the first argument is the test case name, but for TEST_F()
 this must be the name of the test fixture class.
 */
 
+TEST_F(SPITransfer, WHENPinModeHasNotBeenCalledTHENTheCallersChipSelectPinIsHigh) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    EXPECT_EQ(HIGH, getPinLatchValue(SS));
+}
+
 TEST_F(SPITransfer, WHENPinModeIsCalledTHENAWriteTransactionIsSent) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);

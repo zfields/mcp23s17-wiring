@@ -28,11 +28,18 @@ enum DataMode : uint8_t {
 	SPI_MODE2 = 8,
 	SPI_MODE3 = 12,
 };
-/*
-struct SPISettings {
-	
+enum PinMode : uint8_t {
+	INPUT = 0,
+	OUTPUT,
+	INPUT_PULLUP,
 };
-*/
+
+enum SPIPinAlias : uint8_t {
+	SS = 10,
+	MOSI,
+	MISO,
+	SCK,
+};
 
 struct MOCK_spi {
 	static bool _has_begun;
@@ -84,6 +91,11 @@ struct MOCK_spi {
 void
 initMockState (
 	void
+);
+
+uint8_t
+getPinLatchValue (
+	const uint8_t pin_
 );
 
 #endif
