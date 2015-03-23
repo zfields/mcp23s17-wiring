@@ -96,6 +96,12 @@ TEST_F(SPITransfer, WHENPinModeHasNotBeenCalledTHENTheCallersChipSelectPinIsHigh
     EXPECT_EQ(HIGH, getPinLatchValue(SS));
 }
 
+TEST_F(SPITransfer, WHENPinModeIsCalledTHENTheCallersChipSelectPinIsPulledFromHighToLowAndBack) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    EXPECT_EQ(LOW_TO_HIGH, getPinTransition(SS));
+}
+
 TEST_F(SPITransfer, WHENPinModeIsCalledTHENAWriteTransactionIsSent) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);

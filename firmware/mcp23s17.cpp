@@ -31,6 +31,7 @@ mcp23s17::pinMode (
 	uint8_t bit_mask;
 	ControlRegister control_register(ControlRegister::IODIRA);
 	
+	digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
 	if ( pin_ / 8 ) { control_register = ControlRegister::IODIRB; }
 	SPI.transfer(static_cast<uint8_t>(control_register));
@@ -40,6 +41,7 @@ mcp23s17::pinMode (
 		bit_mask = (static_cast<uint8_t>(1) << pin_ % 8);
 	}
 	SPI.transfer(bit_mask);
+	digitalWrite(SS, HIGH);
 	
 	return;
 }
