@@ -59,7 +59,7 @@ from different test cases can have the same individual name.
 */
 TEST(Construction, WHENObjectIsConstructedTHENAddressParameterIsStored) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    ASSERT_EQ(0x4C, gpio_x.getSpiBusAddress());
+    EXPECT_EQ(0x4C, gpio_x.getSpiBusAddress());
 }
 
 TEST(Construction, WHENObjectIsConstructedTHENControlRegisterAddressesArePopulatedWithBankEqualsZeroValues) {
@@ -83,7 +83,7 @@ TEST(Construction, WHENObjectIsConstructedTHENControlRegisterValuesArePopulated)
 
 TEST(Construction, WHENObjectIsConstructedTHENSPIBeginIsCalled) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    ASSERT_EQ(true, SPI._has_begun);
+    EXPECT_EQ(true, SPI._has_begun);
 }
 
 /*
@@ -91,13 +91,54 @@ Like TEST(), the first argument is the test case name, but for TEST_F()
 this must be the name of the test fixture class.
 */
 
-TEST_F(SPITransfer, WHENPinModeIsCalledTHENTheProperSPITransactionIsSent) {
+TEST_F(SPITransfer, WHENPinModeIsCalledTHENAWriteTransactionIsSent) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
-    EXPECT_EQ(gpio_x.getSpiBusAddress() | static_cast<uint8_t>(mcp23s17::RegisterTransaction::WRITE), _spi_transaction[0]);
-    EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA), _spi_transaction[1]);
-    EXPECT_EQ(0xFB, _spi_transaction[2]);
+    EXPECT_EQ(static_cast<uint8_t>(mcp23s17::RegisterTransaction::WRITE), (_spi_transaction[0] & 0x01));
 }
+
+TEST_F(SPITransfer, WHENPinModeIsCalledOnPinLessThanEightTHENTheIODIRARegisterIsTargeted) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA), _spi_transaction[1]);
+}
+
+//TODO: Consider 16-bit mode
+TEST_F(SPITransfer, WHENPinModeIsCalledOnPinGreaterThanOrEqualToEightTHENTheIODIRBRegisterIsTargeted) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(8, mcp23s17::PinMode::INPUT);
+    EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRB), _spi_transaction[1]);
+}
+
+TEST_F(SPITransfer, WHENPinModeIsCalledForInputOnPinLessThanEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
+    const uint8_t BIT_POSITION = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+}
+
+TEST_F(SPITransfer, WHENPinModeIsCalledForInputOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
+    const uint8_t BIT_POSITION = 8 % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(8, mcp23s17::PinMode::INPUT);
+    EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+}
+
+TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinLessThanEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
+    const uint8_t BIT_POSITION = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+}
+
+TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
+    const uint8_t BIT_POSITION = 8 % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+}
+
+//TODO: Cache register values
 
 } // namespace
 /*

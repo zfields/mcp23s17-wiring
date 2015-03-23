@@ -33,31 +33,29 @@ struct SPISettings {
 	
 };
 */
+
 struct MOCK_spi {
+	static bool _has_begun;
+	
+	static std::function<void(void)> _begin;
+	static std::function<void(void)> _end;
+	static std::function<void(uint8_t)> _setBitOrder;
+	static std::function<void(uint8_t)> _setClockDivider;
+	static std::function<void(uint8_t)> _setDataMode;
+	static std::function<uint8_t(uint8_t)> _transfer;
+	
 	static
 	void
 	begin (
 		void
 	);	
-/*	
-	static
-	void
-	beginTransaction (
-		SPISettings settings_
-	);
-*/	
+	
 	static
 	void
 	end (
 		void
 	);
-/*	
-	static
-	void
-	endTransaction (
-		void
-	);
-*/	
+	
 	static
 	void
 	setBitOrder (
@@ -80,15 +78,7 @@ struct MOCK_spi {
 	uint8_t
 	transfer (
 		uint8_t data_
-	);
-	
-	static std::function<void(void)> _begin;
-	static std::function<void(void)> _end;
-	static std::function<void(uint8_t)> _setBitOrder;
-	static std::function<void(uint8_t)> _setClockDivider;
-	static std::function<void(uint8_t)> _setDataMode;
-	static std::function<uint8_t(uint8_t)> _transfer;
-	static bool _has_begun;
+	);	
 };
 
 void
