@@ -38,7 +38,7 @@ class SPITransfer : public ::testing::Test {
     
     void SetUp (void) {
         initMockState();
-        for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = '\0'; }
+        for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
         SPI._transfer = [&](uint8_t byte_){
             _spi_transaction[_index] = byte_;
             ++_index;
@@ -104,13 +104,15 @@ TEST_F(SPITransfer, WHENPinModeIsCalledTHENTheCallersChipSelectPinIsPulledFromHi
 
 TEST_F(SPITransfer, WHENPinModeIsCalledTHENAWriteTransactionIsSent) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    ASSERT_LT(0, _index);
     EXPECT_EQ(static_cast<uint8_t>(mcp23s17::RegisterTransaction::WRITE), (_spi_transaction[0] & 0x01));
 }
 
 TEST_F(SPITransfer, WHENPinModeIsCalledOnPinLessThanEightTHENTheIODIRARegisterIsTargeted) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    ASSERT_LT(1, _index);
     EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA), _spi_transaction[1]);
 }
 
@@ -118,6 +120,7 @@ TEST_F(SPITransfer, WHENPinModeIsCalledOnPinLessThanEightTHENTheIODIRARegisterIs
 TEST_F(SPITransfer, WHENPinModeIsCalledOnPinGreaterThanOrEqualToEightTHENTheIODIRBRegisterIsTargeted) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    ASSERT_LT(1, _index);
     EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRB), _spi_transaction[1]);
 }
 
@@ -125,6 +128,7 @@ TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinLessThanEightTHENAMaskWithT
     const uint8_t BIT_POSITION = 3;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    ASSERT_LT(2, _index);
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
@@ -132,6 +136,7 @@ TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinGreaterThanOrEqualToEightTH
     const uint8_t BIT_POSITION = 8 % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    ASSERT_LT(2, _index);
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
@@ -139,6 +144,7 @@ TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinLessThanEightTHENAMaskWithT
     const uint8_t BIT_POSITION = 3;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    ASSERT_LT(2, _index);
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
@@ -146,6 +152,7 @@ TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinGreaterThanOrEqualToEightTH
     const uint8_t BIT_POSITION = 8 % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    ASSERT_LT(2, _index);
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
