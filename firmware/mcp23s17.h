@@ -90,9 +90,9 @@ class mcp23s17 {
 	/// \param [in] mode_ The direction of use INPUT/OUTPUT
 	void
 	pinMode (
-		uint8_t pin_,
-		PinMode mode_
-	);
+		const uint8_t pin_,
+		const PinMode mode_
+	) const;
 	
   protected:
 	// Protected instance variable(s)

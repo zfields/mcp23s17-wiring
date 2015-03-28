@@ -25,9 +25,9 @@ mcp23s17::mcp23s17 (
 
 void
 mcp23s17::pinMode (
-	uint8_t pin_,
-	PinMode mode_
-) {
+	const uint8_t pin_,
+	const PinMode mode_
+) const {
 	uint8_t bit_mask;
 	ControlRegister control_register(ControlRegister::IODIRA);
 	
