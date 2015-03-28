@@ -98,7 +98,7 @@ TEST_F(SPITransfer, WHENPinModeHasNotBeenCalledTHENTheCallersChipSelectPinIsHigh
 
 TEST_F(SPITransfer, WHENPinModeIsCalledTHENTheCallersChipSelectPinIsPulledFromHighToLowAndBack) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
     EXPECT_EQ(LOW_TO_HIGH, getPinTransition(SS));
 }
 
@@ -117,22 +117,22 @@ TEST_F(SPITransfer, WHENPinModeIsCalledOnPinLessThanEightTHENTheIODIRARegisterIs
 //TODO: Consider 16-bit mode
 TEST_F(SPITransfer, WHENPinModeIsCalledOnPinGreaterThanOrEqualToEightTHENTheIODIRBRegisterIsTargeted) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(8, mcp23s17::PinMode::INPUT);
+    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
     EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRB), _spi_transaction[1]);
 }
 
-TEST_F(SPITransfer, WHENPinModeIsCalledForInputOnPinLessThanEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
+TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinLessThanEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
     const uint8_t BIT_POSITION = 3;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
-    EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
-TEST_F(SPITransfer, WHENPinModeIsCalledForInputOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
+TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
     const uint8_t BIT_POSITION = 8 % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(8, mcp23s17::PinMode::INPUT);
-    EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
 TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinLessThanEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
