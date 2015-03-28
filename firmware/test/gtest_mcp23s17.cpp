@@ -165,6 +165,19 @@ TEST_F(SPITransfer, WHENPinModeIsCalledOnPinFromTheSamePortAsAPreviousCallTHENTh
     EXPECT_EQ(0x00, (gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRB)] & 0x01));
 }
 
+TEST_F(SPITransfer, WHENPinModeIsCalledOnPinAlreadyInTheCorrectStateTHENNoSPITransactionOccurs) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    // Make the original call to set the state
+    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    
+    // Reset the index after the original transaction
+    _index = 0;
+    
+    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    EXPECT_EQ(0, _index);
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {

@@ -42,8 +42,10 @@ mcp23s17::pinMode (
 		bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
 	}
 	
+	// Test to see if bit is already set
+	if ( _control_register[static_cast<uint8_t>(control_register)] == bit_mask ) { return; }
 	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
-
+	
 	// Send data
 	digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
