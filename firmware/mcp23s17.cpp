@@ -33,10 +33,13 @@ mcp23s17::pinMode (
 	
 	// Prepare data
 	if ( pin_ / 8 ) { control_register = ControlRegister::IODIRB; }
+	
+	// Check cache for exisiting data
+	bit_mask = _control_register[static_cast<uint8_t>(control_register)];
 	if ( mode_ == PinMode::OUTPUT ) {
-		bit_mask = ~(static_cast<uint8_t>(1) << pin_ % 8);
+		bit_mask &= ~(static_cast<uint8_t>(1) << pin_ % 8);
 	} else {
-		bit_mask = (static_cast<uint8_t>(1) << pin_ % 8);
+		bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
 	}
 	
 	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;

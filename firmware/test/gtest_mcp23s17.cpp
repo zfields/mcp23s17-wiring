@@ -157,6 +157,14 @@ TEST_F(SPITransfer, WHENPinModeIsCalledOnPinFromADifferentPortThanThePreviousCal
   EXPECT_EQ(0x00, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> 7) & 0x01));
 }
 
+TEST_F(SPITransfer, WHENPinModeIsCalledOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinIsNotDisturbed) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
+    EXPECT_EQ(0x00, (gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRB)] & 0x01));
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {
