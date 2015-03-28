@@ -149,7 +149,13 @@ TEST_F(SPITransfer, WHENPinModeIsCalledForOutputOnPinGreaterThanOrEqualToEightTH
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
-//TODO: Cache register values
+TEST_F(SPITransfer, WHENPinModeIsCalledOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinIsNotDisturbed) {
+  TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+  
+  gpio_x.pinMode(7, mcp23s17::PinMode::OUTPUT);
+  gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
+  EXPECT_EQ(0x00, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> 7) & 0x01));
+}
 
 } // namespace
 /*

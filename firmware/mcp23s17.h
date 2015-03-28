@@ -92,7 +92,7 @@ class mcp23s17 {
 	pinMode (
 		const uint8_t pin_,
 		const PinMode mode_
-	) const;
+	);
 	
   protected:
 	// Protected instance variable(s)
