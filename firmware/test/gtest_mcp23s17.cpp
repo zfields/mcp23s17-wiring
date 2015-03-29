@@ -248,6 +248,21 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinGreaterThanOrEqualToEightTHE
     EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::GPIOB), _spi_transaction[1]);
 }
 
+TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinLessThanEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
+    const uint8_t BIT_POSITION = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(3, mcp23s17::PinLatchValue::HIGH);
+    ASSERT_LT(2, _index);
+    EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {

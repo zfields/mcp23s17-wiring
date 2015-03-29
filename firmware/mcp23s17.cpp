@@ -36,6 +36,7 @@ mcp23s17::digitalWrite (
 	::digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
 	SPI.transfer(static_cast<uint8_t>(control_register));
+	SPI.transfer(0x08);
 	::digitalWrite(SS, HIGH);
 	
 	return;
