@@ -33,7 +33,7 @@ mcp23s17::digitalWrite (
 	ControlRegister control_register(ControlRegister::GPIOA);
 	if ( pin_ / 8 ) { control_register = ControlRegister::GPIOB; }
 	if ( PinLatchValue::LOW == value_ ) {
-		bit_mask = 0xF5;
+		bit_mask = ~(static_cast<uint8_t>(1) << pin_ % 8);
 	} else {
 		bit_mask = (static_cast<uint8_t>(1) << pin_ % 8);
 	}

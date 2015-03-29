@@ -128,47 +128,51 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinGreaterThanOrEqualToEightTHENTheI
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledForOutputOnPinLessThanEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
-    const uint8_t BIT_POSITION = 3;
+    const uint8_t PIN = 3;
+    const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
     ASSERT_LT(2, _index);
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledForOutputOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
-    const uint8_t BIT_POSITION = 8 % 8;
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
     ASSERT_LT(2, _index);
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinLessThanEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
-    const uint8_t BIT_POSITION = 3;
+    const uint8_t PIN = 3;
+    const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
 
     // Reset the SPI transaction for next transaction
     _index = 0;
     for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
     MOCK::resetPinTransitions();
     
-    gpio_x.pinMode(3, mcp23s17::PinMode::INPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
     ASSERT_LT(2, _index);
     EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
-    const uint8_t BIT_POSITION = 8 % 8;
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
     
     // Reset the SPI transaction for next transaction
     _index = 0;
     for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
     MOCK::resetPinTransitions();
     
-    gpio_x.pinMode(8, mcp23s17::PinMode::INPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
     ASSERT_LT(2, _index);
     EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
@@ -261,53 +265,79 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinGreaterThanOrEqualToEightTHE
 }
 
 TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinLessThanEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
-    const uint8_t BIT_POSITION = 3;
+    const uint8_t PIN = 3;
+    const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
     
     // Reset the SPI transaction for next transaction
     _index = 0;
     for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
     MOCK::resetPinTransitions();
     
-    gpio_x.digitalWrite(3, mcp23s17::PinLatchValue::HIGH);
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
     ASSERT_LT(2, _index);
     EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
 TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
-    const uint8_t BIT_POSITION = 8 % 8;
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
     
     // Reset the SPI transaction for next transaction
     _index = 0;
     for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
     MOCK::resetPinTransitions();
     
-    gpio_x.digitalWrite(8, mcp23s17::PinLatchValue::HIGH);
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
     ASSERT_LT(2, _index);
     EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
 TEST_F(MockSPITransfer, digitalWrite$WHENCalledForLowOnPinLessThanEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
-    const uint8_t BIT_POSITION = 3;
+    const uint8_t PIN = 3;
+    const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
     
     // Reset the SPI transaction for next transaction
     _index = 0;
     for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
     MOCK::resetPinTransitions();
     
-    gpio_x.digitalWrite(3, mcp23s17::PinLatchValue::HIGH);
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
     
     // Reset the SPI transaction for next transaction
     _index = 0;
     for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
     MOCK::resetPinTransitions();
     
-    gpio_x.digitalWrite(3, mcp23s17::PinLatchValue::LOW);
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::LOW);
+    ASSERT_LT(2, _index);
+    EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+}
+
+TEST_F(MockSPITransfer, digitalWrite$WHENCalledForLowOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitUnsetIsSent) {
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::LOW);
     ASSERT_LT(2, _index);
     EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
