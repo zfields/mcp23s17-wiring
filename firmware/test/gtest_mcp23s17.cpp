@@ -38,7 +38,7 @@ class MockSPITransfer : public ::testing::Test {
     }
     
     void SetUp (void) {
-        initMockState();
+        MOCK::initMockState();
         for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
         SPI._transfer = [&](uint8_t byte_){
             _spi_transaction[_index] = byte_;
@@ -96,13 +96,13 @@ this must be the name of the test fixture class.
 
 TEST_F(MockSPITransfer, pinMode$WHENNotCalledTHENTheCallersChipSelectPinIsHigh) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    EXPECT_EQ(HIGH, getPinLatchValue(SS));
+    EXPECT_EQ(HIGH, MOCK::getPinLatchValue(SS));
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledTHENTheCallersChipSelectPinIsPulledFromHighToLowAndBack) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
-    EXPECT_EQ(LOW_TO_HIGH, getPinTransition(SS));
+    EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS));
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledTHENAWriteTransactionIsSent) {
@@ -160,11 +160,11 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForOutputOnPinGreaterThanOrEqualToEigh
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinIsNotDisturbed) {
-  TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
   
-  gpio_x.pinMode(7, mcp23s17::PinMode::OUTPUT);
-  gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
-  EXPECT_EQ(0x00, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> 7) & 0x01));
+    gpio_x.pinMode(7, mcp23s17::PinMode::OUTPUT);
+    gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
+    EXPECT_EQ(0x00, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> 7) & 0x01));
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinIsNotDisturbed) {
@@ -184,6 +184,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinAlreadyInTheCorrectStateTHENNoSPI
     // Reset the SPI transaction for next transaction
     _index = 0;
     for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
     
     gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
     EXPECT_EQ(0, _index);

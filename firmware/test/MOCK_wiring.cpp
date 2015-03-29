@@ -59,16 +59,17 @@ MOCK_spi::transfer (
 
 namespace {
 	static uint8_t _pin_latch_value[ARDUINO_PINS] = { 0 };
-	static uint8_t _pin_transition[ARDUINO_PINS] = { 0 };
+	static MOCK::PinTransition _pin_transition[ARDUINO_PINS] = { static_cast<MOCK::PinTransition>(0) };
 }
 
 void
-initMockState (
+MOCK::initMockState (
 	void
 ) {
 	MOCK_spi::_has_begun = false;
+	
 	// Set all transistions to NO_TRANSITION
-	for ( int i = 0 ; i < ARDUINO_PINS ; ++i ) { _pin_transition[i] = static_cast<uint8_t>(NO_TRANSITION); }
+	resetPinTransitions();
 	
 	MOCK_spi::_begin = [](){
 		MOCK_spi::_has_begun = true;
@@ -83,36 +84,47 @@ initMockState (
 }
 
 uint8_t
-getPinLatchValue (
+MOCK::getPinLatchValue (
 	const uint8_t pin_
 ) {
 	return _pin_latch_value[pin_];
 }
 
-uint8_t
-getPinTransition (
+MOCK::PinTransition
+MOCK::getPinTransition (
 	const uint8_t pin_
 ) {
 	return _pin_transition[pin_];
 }
 
 void
+MOCK::resetPinTransitions (
+	void
+) {
+	for ( int i = 0 ; i < ARDUINO_PINS ; ++i ) { _pin_transition[i] = PinTransition::NO_TRANSITION; }
+}
+
+namespace MOCK {
+	
+void
 setPinLatchValue (
 	const uint8_t pin_,
 	const uint8_t latch_value_
 ) {
 	if ( _pin_latch_value[pin_] != latch_value_ ) {
-		_pin_transition[pin_] = latch_value_;
+		_pin_transition[pin_] = static_cast<PinTransition>(latch_value_);
 		_pin_latch_value[pin_] = latch_value_;
 	}
 }
+
+} // namespace MOCK
 
 void
 digitalWrite (
 	const uint8_t pin_,
 	const uint8_t latch_value_
 ) {
-	setPinLatchValue(pin_, latch_value_);
+	MOCK::setPinLatchValue(pin_, latch_value_);
 }
 
 /* Created and copyrighted by Zachary J. Fields. Offered as open source under the MIT License (MIT). */

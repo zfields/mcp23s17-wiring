@@ -29,12 +29,6 @@ enum DataMode : uint8_t {
 	SPI_MODE3 = 12,
 };
 
-enum PinTransition : uint8_t {
-	NO_TRANSITION = static_cast<uint8_t>(-1),
-	HIGH_TO_LOW = 0,
-	LOW_TO_HIGH,
-};
-
 enum PinMode : uint8_t {
 	INPUT = 0,
 	OUTPUT,
@@ -101,6 +95,20 @@ struct MOCK_spi {
 };
 
 void
+digitalWrite (
+	const uint8_t pin_,
+	const uint8_t latch_value_
+);
+
+namespace MOCK {
+
+enum class PinTransition : uint8_t {
+	NO_TRANSITION = static_cast<uint8_t>(-1),
+	HIGH_TO_LOW = 0,
+	LOW_TO_HIGH,
+};
+
+void
 initMockState (
 	void
 );
@@ -110,16 +118,17 @@ getPinLatchValue (
 	const uint8_t pin_
 );
 
-uint8_t
+PinTransition
 getPinTransition (
 	const uint8_t pin_
 );
 
 void
-digitalWrite (
-	const uint8_t pin_,
-	const uint8_t latch_value_
+resetPinTransitions (
+	void
 );
+
+} // namespace MOCK
 
 #endif
 
