@@ -37,7 +37,7 @@ mcp23s17::digitalWrite (
 	} else {
 		bit_mask = (static_cast<uint8_t>(1) << pin_ % 8);
 	}
-	
+	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
 	
 	// Send data
 	::digitalWrite(SS, LOW);
