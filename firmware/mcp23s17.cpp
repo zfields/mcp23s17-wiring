@@ -20,6 +20,7 @@ mcp23s17::mcp23s17 (
 	_control_register_address{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 }
 {
 	SPI.begin();
+	//TODO: Set IOCON:HAEN bit
 	return;
 }
 
@@ -31,6 +32,7 @@ mcp23s17::digitalWrite (
 	// Send data
 	::digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+	SPI.transfer(static_cast<uint8_t>(ControlRegister::GPIOA));
 	::digitalWrite(SS, HIGH);
 	
 	return;
@@ -43,8 +45,6 @@ mcp23s17::pinMode (
 ) {
 	uint8_t bit_mask;
 	ControlRegister control_register(ControlRegister::IODIRA);
-	
-	// Prepare data
 	if ( pin_ / 8 ) { control_register = ControlRegister::IODIRB; }
 	
 	// Check cache for exisiting data
