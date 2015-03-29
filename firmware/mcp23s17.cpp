@@ -29,14 +29,16 @@ mcp23s17::digitalWrite (
 	const uint8_t pin_,
 	const PinLatchValue value_
 ) {
+	uint8_t bit_mask;
 	ControlRegister control_register(ControlRegister::GPIOA);
 	if ( pin_ / 8 ) { control_register = ControlRegister::GPIOB; }
+	bit_mask = (static_cast<uint8_t>(1) << pin_ % 8);
 	
 	// Send data
 	::digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
 	SPI.transfer(static_cast<uint8_t>(control_register));
-	SPI.transfer(0x08);
+	SPI.transfer(bit_mask);
 	::digitalWrite(SS, HIGH);
 	
 	return;
