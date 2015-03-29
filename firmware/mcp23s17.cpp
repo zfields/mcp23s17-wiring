@@ -47,11 +47,11 @@ mcp23s17::pinMode (
 	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
 	
 	// Send data
-	digitalWrite(SS, LOW);
+	::digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
 	SPI.transfer(static_cast<uint8_t>(control_register));
 	SPI.transfer(bit_mask);
-	digitalWrite(SS, HIGH);
+	::digitalWrite(SS, HIGH);
 	
 	return;
 }
