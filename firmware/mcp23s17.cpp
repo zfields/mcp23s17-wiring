@@ -24,6 +24,18 @@ mcp23s17::mcp23s17 (
 }
 
 void
+mcp23s17::digitalWrite (
+	const uint8_t pin_,
+	const PinLatchValue value_
+) {
+	// Send data
+	::digitalWrite(SS, LOW);
+	::digitalWrite(SS, HIGH);
+	
+	return;
+}
+
+void
 mcp23s17::pinMode (
 	const uint8_t pin_,
 	const PinMode mode_

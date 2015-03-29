@@ -8,6 +8,11 @@
 class mcp23s17 {
   public:
 	// Definition(s)
+	enum class PinLatchValue {
+		LOW = 0,
+		HIGH,
+	};
+	
 	enum class PinMode {
 		OUTPUT = 0,
 		INPUT,
@@ -92,6 +97,17 @@ class mcp23s17 {
 	pinMode (
 		const uint8_t pin_,
 		const PinMode mode_
+	);
+	
+	/// \brief Write HIGH or LOW on pins
+	/// \param [in] pin_ The number associated with the pin
+	/// \param [in] value_ The value set to the latch
+	/// \n - HIGH => Vcc
+	/// \n - LOW => GND
+	void
+	digitalWrite (
+		const uint8_t pin_,
+		const PinLatchValue value_
 	);
 	
   protected:

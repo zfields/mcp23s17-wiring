@@ -190,6 +190,19 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinAlreadyInTheCorrectStateTHENNoSPI
     EXPECT_EQ(0, _index);
 }
 
+TEST_F(MockSPITransfer, digitalWrite$WHENCalledTHENTheCallersChipSelectPinIsPulledFromHighToLowAndBack) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    gpio_x.pinMode(3, mcp23s17::PinMode::OUTPUT);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(3, mcp23s17::PinLatchValue::HIGH);
+    EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS));
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {
