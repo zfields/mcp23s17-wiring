@@ -190,7 +190,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinFromADifferentPortThanThePrevious
     EXPECT_EQ(0x00, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> 7) & 0x01));
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinFromTheSamePortAsAPreviousCallForOutputTHENTheOriginalPinIsNotDisturbed) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     
     gpio_x.pinMode(8, mcp23s17::PinMode::OUTPUT);
@@ -383,6 +383,38 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinFromADifferentPortThanThePre
     gpio_x.digitalWrite(10, mcp23s17::PinLatchValue::HIGH);
     EXPECT_EQ(0x01, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPIOA)] >> BIT_POSITION) & 0x01));
 }
+
+TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinFromTheSamePortAsAPreviousCallForHighTHENTheOriginalPinIsNotDisturbed) {
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
+
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(10, mcp23s17::PinLatchValue::HIGH);
+    EXPECT_EQ(0x01, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPIOB)] >> BIT_POSITION) & 0x01));
+}
+
+//TODO: Don't write transaction if pin mode is not OUTPUT
 
 } // namespace
 /*
