@@ -445,6 +445,29 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinFromTheSamePortAsAPre
     EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
 }
 
+TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinAlreadyInTheCorrectStateTHENNoSPITransactionOccurs) {
+    const uint8_t PIN = 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    // Make the original call to set the state
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
+    EXPECT_EQ(0, _index);
+}
+
 //TODO: Don't write transaction if pin mode is not OUTPUT
 
 } // namespace

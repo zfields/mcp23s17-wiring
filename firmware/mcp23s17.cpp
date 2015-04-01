@@ -40,6 +40,8 @@ mcp23s17::digitalWrite (
 	} else {
 		bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
 	}
+
+	if ( _control_register[static_cast<uint8_t>(control_register)] == bit_mask ) { return; }
 	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
 	
 	// Send data
