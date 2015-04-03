@@ -40,11 +40,11 @@ mcp23s17::digitalWrite (
 	// Check cache for exisiting data
 	bit_mask = _control_register[static_cast<uint8_t>(control_register)];
 	if ( PinLatchValue::LOW == value_ ) {
-		bit_mask = ~(static_cast<uint8_t>(1) << pin_ % 8);
+		bit_mask &= ~(static_cast<uint8_t>(1) << pin_ % 8);
 	} else {
 		bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
 	}
-
+    
 	// Test to see if bit is already set
 	if ( _control_register[static_cast<uint8_t>(control_register)] == bit_mask ) { return; }
 	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
