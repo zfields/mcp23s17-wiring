@@ -30,15 +30,18 @@ mcp23s17::digitalWrite (
 	const PinLatchValue value_
 ) {
 	uint8_t bit_mask;
-	ControlRegister control_register(ControlRegister::GPIOA);
-	if ( pin_ / 8 ) { control_register = ControlRegister::GPIOB; }
-	else {
-		// Check to see if device is in the proper state
-		if ( ((_control_register[static_cast<uint8_t>(ControlRegister::IODIRA)] >> (pin_ % 8)) & 0x01) == static_cast<uint8_t>(PinMode::INPUT) ) { return; }
-	}
+	ControlRegister latch_register(ControlRegister::GPIOA);
+    ControlRegister direction_register(ControlRegister::IODIRA);
+	if ( pin_ / 8 ) {
+        latch_register = ControlRegister::GPIOB;
+        direction_register = ControlRegister::IODIRB;
+    }
+
+	// Check to see if device is in the proper state
+	if ( ((_control_register[static_cast<uint8_t>(direction_register)] >> (pin_ % 8)) & 0x01) == static_cast<uint8_t>(PinMode::INPUT) ) { return; }
 	
 	// Check cache for exisiting data
-	bit_mask = _control_register[static_cast<uint8_t>(control_register)];
+	bit_mask = _control_register[static_cast<uint8_t>(latch_register)];
 	if ( PinLatchValue::LOW == value_ ) {
 		bit_mask &= ~(static_cast<uint8_t>(1) << pin_ % 8);
 	} else {
@@ -46,13 +49,13 @@ mcp23s17::digitalWrite (
 	}
     
 	// Test to see if bit is already set
-	if ( _control_register[static_cast<uint8_t>(control_register)] == bit_mask ) { return; }
-	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
+	if ( _control_register[static_cast<uint8_t>(latch_register)] == bit_mask ) { return; }
+	_control_register[static_cast<uint8_t>(latch_register)] = bit_mask;
 	
 	// Send data
 	::digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
-	SPI.transfer(static_cast<uint8_t>(control_register));
+	SPI.transfer(static_cast<uint8_t>(latch_register));
 	SPI.transfer(bit_mask);
 	::digitalWrite(SS, HIGH);
 	
@@ -65,11 +68,11 @@ mcp23s17::pinMode (
 	const PinMode mode_
 ) {
 	uint8_t bit_mask;
-	ControlRegister control_register(ControlRegister::IODIRA);
-	if ( pin_ / 8 ) { control_register = ControlRegister::IODIRB; }
+	ControlRegister latch_register(ControlRegister::IODIRA);
+	if ( pin_ / 8 ) { latch_register = ControlRegister::IODIRB; }
 	
 	// Check cache for exisiting data
-	bit_mask = _control_register[static_cast<uint8_t>(control_register)];
+	bit_mask = _control_register[static_cast<uint8_t>(latch_register)];
 	if ( PinMode::INPUT == mode_ ) {
 		bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
 	} else {
@@ -77,13 +80,13 @@ mcp23s17::pinMode (
 	}
 	
 	// Test to see if bit is already set
-	if ( _control_register[static_cast<uint8_t>(control_register)] == bit_mask ) { return; }
-	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
+	if ( _control_register[static_cast<uint8_t>(latch_register)] == bit_mask ) { return; }
+	_control_register[static_cast<uint8_t>(latch_register)] = bit_mask;
 	
 	// Send data
 	::digitalWrite(SS, LOW);
 	SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
-	SPI.transfer(static_cast<uint8_t>(control_register));
+	SPI.transfer(static_cast<uint8_t>(latch_register));
 	SPI.transfer(bit_mask);
 	::digitalWrite(SS, HIGH);
 	
