@@ -32,6 +32,10 @@ mcp23s17::digitalWrite (
 	uint8_t bit_mask;
 	ControlRegister control_register(ControlRegister::GPIOA);
 	if ( pin_ / 8 ) { control_register = ControlRegister::GPIOB; }
+	else {
+		// Check to see if device is in the proper state
+		if ( ((_control_register[static_cast<uint8_t>(ControlRegister::IODIRA)] >> (pin_ % 8)) & 0x01) == static_cast<uint8_t>(PinMode::INPUT) ) { return; }
+	}
 	
 	// Check cache for exisiting data
 	bit_mask = _control_register[static_cast<uint8_t>(control_register)];
@@ -41,6 +45,7 @@ mcp23s17::digitalWrite (
 		bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
 	}
 
+	// Test to see if bit is already set
 	if ( _control_register[static_cast<uint8_t>(control_register)] == bit_mask ) { return; }
 	_control_register[static_cast<uint8_t>(control_register)] = bit_mask;
 	

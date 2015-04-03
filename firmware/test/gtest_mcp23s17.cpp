@@ -468,6 +468,21 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinAlreadyInTheCorrectStateTHEN
     EXPECT_EQ(0, _index);
 }
 
+TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinLessThanEightInInputModeTHENNoSPITransactionOccurs) {
+    const uint8_t PIN = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+    
+    // Reset the SPI transaction for next transaction
+    _index = 0;
+    for ( int i = 0 ; i < sizeof(_spi_transaction) ; ++ i ) { _spi_transaction[i] = 0x00; }
+    MOCK::resetPinTransitions();
+    
+    gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
+    EXPECT_EQ(0, _index);
+}
+
 //TODO: Don't write transaction if pin mode is not OUTPUT
 
 } // namespace
