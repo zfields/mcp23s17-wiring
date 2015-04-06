@@ -33,7 +33,7 @@ mcp23s17::digitalRead (
     if ( pin_ / 8 ) {
         latch_register = ControlRegister::GPIOB;
     } else {
-        if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(ControlRegister::IODIRA)] >> pin_) & 0x01) ) { return PinLatchValue::HIGH; }
+        if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(ControlRegister::IODIRA)] >> pin_) & 0x01) ) { return PinLatchValue::LOW; }
     }
     
     // Send data
@@ -60,7 +60,7 @@ mcp23s17::digitalWrite (
     }
 
     // Check to see if device is in the proper state
-    if ( ((_control_register[static_cast<uint8_t>(direction_register)] >> (pin_ % 8)) & 0x01) == static_cast<uint8_t>(PinMode::INPUT) ) { return; }
+    if ( PinMode::INPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> (pin_ % 8)) & 0x01) ) { return; }
     
     // Check cache for exisiting data
     bit_mask = _control_register[static_cast<uint8_t>(latch_register)];
