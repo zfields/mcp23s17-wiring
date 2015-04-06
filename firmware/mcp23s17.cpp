@@ -32,6 +32,7 @@ mcp23s17::digitalRead (
     // Send data
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::READ));
+    SPI.transfer(static_cast<uint8_t>(ControlRegister::GPIOA));
     ::digitalWrite(SS, HIGH);
     
     return PinLatchValue::LOW;
