@@ -29,10 +29,15 @@ mcp23s17::PinLatchValue
 mcp23s17::digitalRead (
     const uint8_t pin_
 ) const {
+    ControlRegister latch_register(ControlRegister::GPIOA);
+    if ( pin_ / 8 ) {
+        latch_register = ControlRegister::GPIOB;
+    }
+    
     // Send data
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::READ));
-    SPI.transfer(static_cast<uint8_t>(ControlRegister::GPIOA));
+    SPI.transfer(static_cast<uint8_t>(latch_register));
     ::digitalWrite(SS, HIGH);
     
     return PinLatchValue::LOW;

@@ -473,6 +473,18 @@ TEST_F(MockSPITransfer, digitalRead$WHENCalledOnPinLessThanEightTHENTheGPIOARegi
   EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::GPIOA), _spi_transaction[1]);
 }
 
+TEST_F(MockSPITransfer, digitalRead$WHENCalledOnPinGreaterThanOrEqualToEightTHENTheGPIOBRegisterIsTargeted) {
+  const uint8_t PIN = 8;
+  TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+  
+  gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+  ResetSpi();
+  
+  gpio_x.digitalRead(PIN);
+  ASSERT_LT(1, _index);
+  EXPECT_EQ(static_cast<uint8_t>(mcp23s17::ControlRegister::GPIOB), _spi_transaction[1]);
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {
