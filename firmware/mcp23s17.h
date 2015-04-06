@@ -90,6 +90,14 @@ class mcp23s17 {
     // Public instance variable(s)
     // Public method(s)
     
+    /// \brief Read from GPIO pins
+    /// \param [in] pin_ The number associated with the pin
+    /// \return HIGH or LOW based on the voltage level on the pin
+    PinLatchValue
+    digitalRead (
+        const uint8_t pin_
+    ) const;
+    
     /// \brief Write HIGH or LOW on pins
     /// \param [in] pin_ The number associated with the pin
     /// \param [in] value_ The value set to the latch
