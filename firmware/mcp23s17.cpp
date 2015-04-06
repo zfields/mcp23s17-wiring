@@ -30,12 +30,12 @@ mcp23s17::digitalRead (
     const uint8_t pin_
 ) const {
     ControlRegister latch_register(ControlRegister::GPIOA);
+    ControlRegister direction_register(ControlRegister::IODIRA);
     if ( pin_ / 8 ) {
         latch_register = ControlRegister::GPIOB;
-    if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(ControlRegister::IODIRB)] >> (pin_ %  8)) & 0x01) ) { return PinLatchValue::HIGH; }
-    } else {
-        if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(ControlRegister::IODIRA)] >> pin_) & 0x01) ) { return PinLatchValue::LOW; }
+        direction_register = ControlRegister::IODIRB;
     }
+    if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> (pin_ %  8)) & 0x01) ) { return PinLatchValue::LOW; }
     
     // Send data
     ::digitalWrite(SS, LOW);
