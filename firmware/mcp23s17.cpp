@@ -31,6 +31,7 @@ mcp23s17::digitalRead (
 ) const {
     // Send data
     ::digitalWrite(SS, LOW);
+    SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::READ));
     ::digitalWrite(SS, HIGH);
     
     return PinLatchValue::LOW;
