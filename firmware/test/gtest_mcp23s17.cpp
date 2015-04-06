@@ -109,7 +109,6 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledTHENTheCallersChipSelectPinIsPulledFro
     const uint8_t PIN = 3;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
-    ASSERT_LT(2, _index);
     EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS));
 }
 
@@ -246,7 +245,6 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledTHENTheCallersChipSelectPinIsPull
     ResetSpi();
     
     gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
-    ASSERT_LT(2, _index);
     EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS));
 }
 
