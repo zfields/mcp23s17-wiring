@@ -438,6 +438,17 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinGreaterThanOrEqualToEightInI
     EXPECT_EQ(0, _index);
 }
 
+TEST_F(MockSPITransfer, digitalRead$WHENCalledTHENTheCallersChipSelectPinIsPulledFromHighToLowAndBack) {
+  const uint8_t PIN = 3;
+  TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+  
+  gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+  ResetSpi();
+  
+  gpio_x.digitalRead(PIN);
+  EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS));
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {

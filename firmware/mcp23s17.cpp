@@ -29,6 +29,10 @@ mcp23s17::PinLatchValue
 mcp23s17::digitalRead (
     const uint8_t pin_
 ) const {
+    // Send data
+    ::digitalWrite(SS, LOW);
+    ::digitalWrite(SS, HIGH);
+    
     return PinLatchValue::LOW;
 }
 
