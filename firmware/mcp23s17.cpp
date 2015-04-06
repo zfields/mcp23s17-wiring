@@ -32,6 +32,7 @@ mcp23s17::digitalRead (
     ControlRegister latch_register(ControlRegister::GPIOA);
     if ( pin_ / 8 ) {
         latch_register = ControlRegister::GPIOB;
+    if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(ControlRegister::IODIRB)] >> (pin_ %  8)) & 0x01) ) { return PinLatchValue::HIGH; }
     } else {
         if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(ControlRegister::IODIRA)] >> pin_) & 0x01) ) { return PinLatchValue::LOW; }
     }
