@@ -51,7 +51,7 @@ mcp23s17::digitalRead (
     ::digitalWrite(SS, HIGH);
     
     //TODO: return SPI return value
-    return PinLatchValue::HIGH;
+    return PinLatchValue::LOW;
 }
 
 void
