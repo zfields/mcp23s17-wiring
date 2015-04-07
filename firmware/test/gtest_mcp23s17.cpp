@@ -560,6 +560,20 @@ TEST_F(MockSPITransfer, digitalRead$WHENCalledOnLOWPinTHENLOWIsReturned) {
     ASSERT_LT(2, _index);
 }
 
+TEST_F(MockSPITransfer, digitalRead$WHENCalledOnHIGHPinTHENHIGHIsReturned) {
+    const uint8_t PIN = 3;
+    // Index: 76543210
+    // Value: 11001010
+    _input_latch_port = 0xCA;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+    ResetSpi();
+    
+    EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, gpio_x.digitalRead(PIN));
+    ASSERT_LT(2, _index);
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {

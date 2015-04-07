@@ -30,9 +30,10 @@ mcp23s17::digitalRead (
     const uint8_t pin_
 ) const {
     const unsigned int bit_pos(pin_ % 8);
-
+    
     ControlRegister latch_register(ControlRegister::GPIOA);
     ControlRegister direction_register(ControlRegister::IODIRA);
+    uint8_t port_latch_values(0x00);
     
     // Select the appropriate port
     if ( pin_ / 8 ) {
@@ -47,11 +48,10 @@ mcp23s17::digitalRead (
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::READ));
     SPI.transfer(static_cast<uint8_t>(latch_register));
-    SPI.transfer(static_cast<uint8_t>(latch_register));  // arbitrary bit to flush result buffer, latch_register is guaranteed to be in active memory
+    port_latch_values = SPI.transfer(static_cast<uint8_t>(latch_register));  // Arbitrary bit to flush result buffer. `latch_register` is selected, because it is guaranteed to be in active memory.
     ::digitalWrite(SS, HIGH);
     
-    //TODO: return SPI return value
-    return PinLatchValue::LOW;
+    return static_cast<PinLatchValue>((port_latch_values >> bit_pos) & 0x01);
 }
 
 void
