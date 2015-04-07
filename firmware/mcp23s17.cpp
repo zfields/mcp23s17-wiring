@@ -29,21 +29,28 @@ mcp23s17::PinLatchValue
 mcp23s17::digitalRead (
     const uint8_t pin_
 ) const {
+    const unsigned int bit_pos(pin_ % 8);
+
     ControlRegister latch_register(ControlRegister::GPIOA);
     ControlRegister direction_register(ControlRegister::IODIRA);
+    
+    // Select the appropriate port
     if ( pin_ / 8 ) {
         latch_register = ControlRegister::GPIOB;
         direction_register = ControlRegister::IODIRB;
     }
-    if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> (pin_ %  8)) & 0x01) ) { return PinLatchValue::LOW; }
+    
+    // Check to see if device is in the proper state
+    if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> bit_pos) & 0x01) ) { return PinLatchValue::LOW; }
     
     // Send data
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::READ));
     SPI.transfer(static_cast<uint8_t>(latch_register));
-    SPI.transfer(1 << (pin_ % 8));
+    SPI.transfer(static_cast<uint8_t>(latch_register));  // arbitrary bit to flush result buffer, latch_register is guaranteed to be in active memory
     ::digitalWrite(SS, HIGH);
     
+    //TODO: return SPI return value
     return PinLatchValue::HIGH;
 }
 
@@ -52,34 +59,39 @@ mcp23s17::digitalWrite (
     const uint8_t pin_,
     const PinLatchValue value_
 ) {
-    uint8_t bit_mask;
+    const unsigned int bit_pos(pin_ % 8);
+    const uint8_t bit_mask(static_cast<uint8_t>(1) << bit_pos);
+    
     ControlRegister latch_register(ControlRegister::GPIOA);
     ControlRegister direction_register(ControlRegister::IODIRA);
+    uint8_t registry_value;
+    
+    // Select the appropriate port
     if ( pin_ / 8 ) {
         latch_register = ControlRegister::GPIOB;
         direction_register = ControlRegister::IODIRB;
     }
-
+    
     // Check to see if device is in the proper state
-    if ( PinMode::INPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> (pin_ % 8)) & 0x01) ) { return; }
+    if ( PinMode::INPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> bit_pos) & 0x01) ) { return; }
     
     // Check cache for exisiting data
-    bit_mask = _control_register[static_cast<uint8_t>(latch_register)];
+    registry_value = _control_register[static_cast<uint8_t>(latch_register)];
     if ( PinLatchValue::LOW == value_ ) {
-        bit_mask &= ~(static_cast<uint8_t>(1) << pin_ % 8);
+        registry_value &= ~bit_mask;
     } else {
-        bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
+        registry_value |= bit_mask;
     }
     
     // Test to see if bit is already set
-    if ( _control_register[static_cast<uint8_t>(latch_register)] == bit_mask ) { return; }
-    _control_register[static_cast<uint8_t>(latch_register)] = bit_mask;
+    if ( _control_register[static_cast<uint8_t>(latch_register)] == registry_value ) { return; }
+    _control_register[static_cast<uint8_t>(latch_register)] = registry_value;
     
     // Send data
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     SPI.transfer(static_cast<uint8_t>(latch_register));
-    SPI.transfer(bit_mask);
+    SPI.transfer(registry_value);
     ::digitalWrite(SS, HIGH);
     
     return;
@@ -90,27 +102,32 @@ mcp23s17::pinMode (
     const uint8_t pin_,
     const PinMode mode_
 ) {
-    uint8_t bit_mask;
+    const unsigned int bit_pos(pin_ % 8);
+    const uint8_t bit_mask(static_cast<uint8_t>(1) << bit_pos);
+    
     ControlRegister latch_register(ControlRegister::IODIRA);
+    uint8_t registry_value;
+    
+    // Select the appropriate port
     if ( pin_ / 8 ) { latch_register = ControlRegister::IODIRB; }
     
     // Check cache for exisiting data
-    bit_mask = _control_register[static_cast<uint8_t>(latch_register)];
+    registry_value = _control_register[static_cast<uint8_t>(latch_register)];
     if ( PinMode::INPUT == mode_ ) {
-        bit_mask |= (static_cast<uint8_t>(1) << pin_ % 8);
+        registry_value |= bit_mask;
     } else {
-        bit_mask &= ~(static_cast<uint8_t>(1) << pin_ % 8);
+        registry_value &= ~bit_mask;
     }
     
     // Test to see if bit is already set
-    if ( _control_register[static_cast<uint8_t>(latch_register)] == bit_mask ) { return; }
-    _control_register[static_cast<uint8_t>(latch_register)] = bit_mask;
+    if ( _control_register[static_cast<uint8_t>(latch_register)] == registry_value ) { return; }
+    _control_register[static_cast<uint8_t>(latch_register)] = registry_value;
     
     // Send data
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     SPI.transfer(static_cast<uint8_t>(latch_register));
-    SPI.transfer(bit_mask);
+    SPI.transfer(registry_value);
     ::digitalWrite(SS, HIGH);
     
     return;

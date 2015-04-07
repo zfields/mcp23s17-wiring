@@ -8,17 +8,25 @@
 class mcp23s17 {
   public:
     // Definition(s)
+    
+    /// \brief Pin Latch Value
+    /// \note HIGH => Vcc
+    /// \n LOW => GND
     enum class PinLatchValue {
         LOW = 0,
         HIGH,
     };
     
+    /// \brief Pin Modes
+    /// \note INPUT_PULLUP uses an internal 100kΩ resistor
+    /// \note The pull-up resistor can provide 40-115uA of current
     enum class PinMode {
         OUTPUT = 0,
         INPUT,
     };
     
-    enum class RegisterTransaction {
+    /// \brief Register Transaction Flag
+    enum class RegisterTransaction : uint8_t {
         WRITE = 0,
         READ,
     };
@@ -26,7 +34,7 @@ class mcp23s17 {
     /// \brief Control Registers
     /// \note IOCONA is equivalent to IOCONB
     /// \note As addressed when IOCON.BANK = 0
-    enum class ControlRegister {
+    enum class ControlRegister : uint8_t {
         IODIRA = 0,
         IODIRB,
         IPOLA,
@@ -56,7 +64,7 @@ class mcp23s17 {
     /// \detail The chip has three pins A0, A1 and A2 dedicated
     /// to supplying an individual address to a chip, which
     /// allows up to eight devices on the bus.
-    enum class HardwareAddress {
+    enum class HardwareAddress : uint8_t {
         HW_ADDR_0 = 0,
         HW_ADDR_1,
         HW_ADDR_2,
@@ -113,6 +121,8 @@ class mcp23s17 {
     /// \param [in] pin_ The number associated with the pin
     /// \param [in] mode_ The direction to set the GPIO pins
     /// \n - INPUT => Prepares the chip to read from the GPIO pins
+    /// \n - INPUT_PULLUP => Prepares the chip to read from the GPIO pins,
+    /// and supplies a 100kΩ resistor to pull the line HIGH while idle.
     /// \n - OUTPUT => Prepares the chip to write from the GPIO pins
     void
     pinMode (
