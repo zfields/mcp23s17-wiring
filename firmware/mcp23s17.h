@@ -19,10 +19,11 @@ class mcp23s17 {
     
     /// \brief Pin Modes
     /// \note INPUT_PULLUP uses an internal 100kΩ resistor
-    /// \note The pull-up resistor can provide 40-115uA of current
+    /// \note The pull-up resistor will provide 40-115uA of current
     enum class PinMode {
         OUTPUT = 0,
         INPUT,
+        INPUT_PULLUP,
     };
     
     /// \brief Register Transaction Flag
