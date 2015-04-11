@@ -113,10 +113,16 @@ mcp23s17::pinMode (
     
     // Check cache for exisiting data
     registry_value = _control_register[static_cast<uint8_t>(latch_register)];
-    if ( PinMode::INPUT == mode_ ) {
-        registry_value |= bit_mask;
-    } else {
+    switch ( mode_ ) {
+      case PinMode::OUTPUT:
         registry_value &= ~bit_mask;
+        break;
+      case PinMode::INPUT:
+        registry_value |= bit_mask;
+        break;
+      case PinMode::INPUT_PULLUP:
+        registry_value = static_cast<uint8_t>(1) << pin_;
+        break;
     }
     
     // Test to see if bit is already set
