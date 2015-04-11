@@ -183,16 +183,16 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinLessThanEightTHENAMaskWit
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinLessThanEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
-  const uint8_t PIN = 3;
-  const uint8_t BIT_POSITION = PIN % 8;
-  TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-  
-  gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
-  ResetSpi();
-  
-  gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
-  EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-  ASSERT_LT(2, _index);
+    const uint8_t PIN = 3;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
+    EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    ASSERT_LT(2, _index);
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
@@ -209,16 +209,16 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinGreaterThanOrEqualToEight
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
-  const uint8_t PIN = 8;
-  const uint8_t BIT_POSITION = PIN % 8;
-  TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-  
-  gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
-  ResetSpi();
-  
-  gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
-  EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-  ASSERT_LT(2, _index);
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
+    EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    ASSERT_LT(2, _index);
 }
 
 TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinIsNotDisturbed) {
@@ -261,8 +261,32 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromTheSamePortAsAPreviou
     ASSERT_LT(2, _index);
     ResetSpi();
     
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+    ASSERT_LT(2, _index);
+    ResetSpi();
+    
     gpio_x.pinMode(10, mcp23s17::PinMode::INPUT);
-    EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    ASSERT_LT(2, _index);
+}
+
+TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinIsNotDisturbed) {
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+    ASSERT_LT(2, _index);
+    ResetSpi();
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::INPUT_PULLUP);
+    EXPECT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -277,7 +301,6 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinAlreadyInTheCorrectStateTHENNoSPI
     EXPECT_EQ(0, _index);
 }
 
-//TODO: Handle mcp23s17::PinMode::INPUT_PULLUP
   /****************/
  /* digitalWrite */
 /****************/

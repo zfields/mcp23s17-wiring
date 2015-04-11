@@ -118,10 +118,8 @@ mcp23s17::pinMode (
         registry_value &= ~bit_mask;
         break;
       case PinMode::INPUT:
-        registry_value |= bit_mask;
-        break;
       case PinMode::INPUT_PULLUP:
-        registry_value = bit_mask;
+        registry_value |= bit_mask;
         break;
     }
     
@@ -136,6 +134,7 @@ mcp23s17::pinMode (
     SPI.transfer(registry_value);
     ::digitalWrite(SS, HIGH);
     
+    //TODO: Set GPPU[A|B] registers on mcp23s17::PinMode::INPUT_PULLUP
     return;
 }
 
