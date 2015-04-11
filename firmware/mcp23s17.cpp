@@ -121,7 +121,7 @@ mcp23s17::pinMode (
         registry_value |= bit_mask;
         break;
       case PinMode::INPUT_PULLUP:
-        registry_value = static_cast<uint8_t>(1) << pin_;
+        registry_value = bit_mask;
         break;
     }
     

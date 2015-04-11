@@ -208,6 +208,19 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinGreaterThanOrEqualToEight
     ASSERT_LT(2, _index);
 }
 
+TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitSetIsSent) {
+  const uint8_t PIN = 8;
+  const uint8_t BIT_POSITION = PIN % 8;
+  TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+  
+  gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+  ResetSpi();
+  
+  gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
+  EXPECT_EQ(0x01, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+  ASSERT_LT(2, _index);
+}
+
 TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinIsNotDisturbed) {
     const uint8_t PIN = 7;
     const uint8_t BIT_POSITION = PIN % 8;
