@@ -118,7 +118,7 @@ getPinLatchValue (
 	const uint8_t pin_
 );
 
-PinTransition
+PinTransition *
 getPinTransition (
 	const uint8_t pin_
 );

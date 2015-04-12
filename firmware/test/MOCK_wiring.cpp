@@ -58,8 +58,11 @@ MOCK_spi::transfer (
 }
 
 namespace {
+	const size_t MAX_CALL_COUNT = 4;
+	
+	static uint8_t _call_count(0);
 	static uint8_t _pin_latch_value[ARDUINO_PINS] = { 0 };
-	static MOCK::PinTransition _pin_transition[ARDUINO_PINS] = { static_cast<MOCK::PinTransition>(0) };
+	static MOCK::PinTransition _pin_transition[ARDUINO_PINS][MAX_CALL_COUNT] = { static_cast<MOCK::PinTransition>(0) };
 }
 
 void
@@ -90,7 +93,7 @@ MOCK::getPinLatchValue (
 	return _pin_latch_value[pin_];
 }
 
-MOCK::PinTransition
+MOCK::PinTransition *
 MOCK::getPinTransition (
 	const uint8_t pin_
 ) {
@@ -101,7 +104,8 @@ void
 MOCK::resetPinTransitions (
 	void
 ) {
-	for ( int i = 0 ; i < ARDUINO_PINS ; ++i ) { _pin_transition[i] = PinTransition::NO_TRANSITION; }
+	_call_count = 0;
+	for ( int i = 0 ; i < ARDUINO_PINS ; ++i ) for ( int j = 0 ; j < MAX_CALL_COUNT ; ++j ) { _pin_transition[i][j] = PinTransition::NO_TRANSITION; }
 }
 
 namespace MOCK {
@@ -112,9 +116,12 @@ setPinLatchValue (
 	const uint8_t latch_value_
 ) {
 	if ( _pin_latch_value[pin_] != latch_value_ ) {
-		_pin_transition[pin_] = static_cast<PinTransition>(latch_value_);
+		_pin_transition[pin_][_call_count] = static_cast<PinTransition>(latch_value_);
 		_pin_latch_value[pin_] = latch_value_;
+	} else {
+		_pin_transition[pin_][_call_count] = PinTransition::NO_TRANSITION;
 	}
+	++_call_count;
 }
 
 } // namespace MOCK
