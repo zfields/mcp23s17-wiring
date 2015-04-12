@@ -106,10 +106,14 @@ mcp23s17::pinMode (
     const uint8_t bit_mask(static_cast<uint8_t>(1) << bit_pos);
     
     ControlRegister latch_register(ControlRegister::IODIRA);
+    ControlRegister pullup_register(ControlRegister::GPPUA);
     uint8_t registry_value;
     
     // Select the appropriate port
-    if ( pin_ / 8 ) { latch_register = ControlRegister::IODIRB; }
+    if ( pin_ / 8 ) {
+        latch_register = ControlRegister::IODIRB;
+        pullup_register = ControlRegister::GPPUB;
+    }
     
     // Check cache for exisiting data
     registry_value = _control_register[static_cast<uint8_t>(latch_register)];
@@ -137,7 +141,7 @@ mcp23s17::pinMode (
     // Send data to GPPU[A|B] registers on mcp23s17::PinMode::INPUT_PULLUP
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
-    SPI.transfer(static_cast<uint8_t>(ControlRegister::GPPUA));
+    SPI.transfer(static_cast<uint8_t>(pullup_register));
     ::digitalWrite(SS, HIGH);
     
     return;
