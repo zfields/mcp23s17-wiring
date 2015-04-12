@@ -265,7 +265,6 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromTheSamePortAsAPreviou
     ResetSpi();
     
     gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
-    ASSERT_LT(2, _index);
     ResetSpi();
     
     gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
@@ -389,7 +388,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinGreaterThanOrEqualT
     ASSERT_LT(5, _index);
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinOnPullupRegisterIsNotDisturbed) {
     const uint8_t PIN = 7;
     const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
@@ -407,6 +406,27 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromADifferentPortT
     gpio_x.pinMode(10, mcp23s17::PinMode::INPUT_PULLUP);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> BIT_POSITION) & 0x01));
     EXPECT_EQ(0x01, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPPUA)] >> BIT_POSITION) & 0x01));
+    ASSERT_LT(5, _index);
+}
+
+TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinOnPullupRegisterIsNotDisturbed) {
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    ResetSpi(6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
+    ASSERT_LT(5, _index);
+    ResetSpi(6);
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::INPUT_PULLUP);
+    ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(0x01, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPPUB)] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 

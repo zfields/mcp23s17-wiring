@@ -107,7 +107,8 @@ mcp23s17::pinMode (
     
     ControlRegister latch_register(ControlRegister::IODIRA);
     ControlRegister pullup_register(ControlRegister::GPPUA);
-    uint8_t registry_value;
+    uint8_t latch_register_cache;
+    uint8_t pullup_register_cache;
     
     // Select the appropriate port
     if ( pin_ / 8 ) {
@@ -116,34 +117,36 @@ mcp23s17::pinMode (
     }
     
     // Check cache for exisiting data
-    registry_value = _control_register[static_cast<uint8_t>(latch_register)];
+    latch_register_cache = _control_register[static_cast<uint8_t>(latch_register)];
+    pullup_register_cache = _control_register[static_cast<uint8_t>(pullup_register)];
     switch ( mode_ ) {
       case PinMode::OUTPUT:
-        registry_value &= ~bit_mask;
+        latch_register_cache &= ~bit_mask;
         break;
       case PinMode::INPUT:
       case PinMode::INPUT_PULLUP:
-        registry_value |= bit_mask;
+        pullup_register_cache |= bit_mask;
+        latch_register_cache |= bit_mask;
         break;
     }
     
     // Test to see if bit is already set
-    if ( _control_register[static_cast<uint8_t>(latch_register)] == registry_value ) { return; }
-    _control_register[static_cast<uint8_t>(latch_register)] = registry_value;
-    _control_register[static_cast<uint8_t>(pullup_register)] = bit_mask;
+    if ( _control_register[static_cast<uint8_t>(latch_register)] == latch_register_cache ) { return; }
+    _control_register[static_cast<uint8_t>(latch_register)] = latch_register_cache;
+    _control_register[static_cast<uint8_t>(pullup_register)] = pullup_register_cache;
     
     // Send data to IODIR[A|B] registers
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     SPI.transfer(static_cast<uint8_t>(latch_register));
-    SPI.transfer(registry_value);
+    SPI.transfer(latch_register_cache);
     ::digitalWrite(SS, HIGH);
     
     // Send data to GPPU[A|B] registers on mcp23s17::PinMode::INPUT_PULLUP
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     SPI.transfer(static_cast<uint8_t>(pullup_register));
-    SPI.transfer(bit_mask);
+    SPI.transfer(pullup_register_cache);
     ::digitalWrite(SS, HIGH);
     
     return;
