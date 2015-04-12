@@ -127,14 +127,17 @@ mcp23s17::pinMode (
     if ( _control_register[static_cast<uint8_t>(latch_register)] == registry_value ) { return; }
     _control_register[static_cast<uint8_t>(latch_register)] = registry_value;
     
-    // Send data
+    // Send data to IODIR[A|B] registers
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     SPI.transfer(static_cast<uint8_t>(latch_register));
     SPI.transfer(registry_value);
     ::digitalWrite(SS, HIGH);
     
-    //TODO: Set GPPU[A|B] registers on mcp23s17::PinMode::INPUT_PULLUP
+    // Send data to GPPU[A|B] registers on mcp23s17::PinMode::INPUT_PULLUP
+    ::digitalWrite(SS, LOW);
+    ::digitalWrite(SS, HIGH);
+    
     return;
 }
 
