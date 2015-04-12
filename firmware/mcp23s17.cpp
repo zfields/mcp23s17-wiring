@@ -137,6 +137,7 @@ mcp23s17::pinMode (
     // Send data to GPPU[A|B] registers on mcp23s17::PinMode::INPUT_PULLUP
     ::digitalWrite(SS, LOW);
     SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+    SPI.transfer(static_cast<uint8_t>(ControlRegister::GPPUA));
     ::digitalWrite(SS, HIGH);
     
     return;
