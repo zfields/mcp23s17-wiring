@@ -124,6 +124,9 @@ mcp23s17::pinMode (
         latch_register_cache &= ~bit_mask;
         break;
       case PinMode::INPUT:
+        pullup_register_cache &= ~bit_mask;
+        latch_register_cache |= bit_mask;
+        break;
       case PinMode::INPUT_PULLUP:
         pullup_register_cache |= bit_mask;
         latch_register_cache |= bit_mask;
