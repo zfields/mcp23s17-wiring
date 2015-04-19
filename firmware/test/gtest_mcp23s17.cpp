@@ -586,6 +586,19 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputAfterInputPullupOnSamePinTHENO
     ASSERT_EQ(3, _index);
 }
 
+TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupAfterInputTHENThePullupRegisterUpdated) {
+    const uint8_t PIN = 7;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPPUA)] >> BIT_POSITION) & 0x01));
+    ASSERT_EQ(3, _index);
+}
+
   /****************/
  /* digitalWrite */
 /****************/
