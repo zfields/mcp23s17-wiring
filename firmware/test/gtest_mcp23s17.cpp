@@ -8,6 +8,11 @@
 
 //TODO: Consider 16-bit mode
 
+enum class BitValue {
+    UNSET = 0x00,
+    SET = 0x01,
+};
+
 class TC_mcp23s17 : public mcp23s17 {
   public:
     TC_mcp23s17 (
@@ -372,7 +377,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinLessThanEightTHENAM
     
     gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x01, ((_spi_transaction[5] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[5] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -386,7 +391,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinGreaterThanOrEqualT
     
     gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x01, ((_spi_transaction[5] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[5] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -407,7 +412,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromADifferentPortT
     
     gpio_x.pinMode(10, mcp23s17::PinMode::INPUT_PULLUP);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x01, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPPUA)] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPPUA)] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -428,7 +433,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromTheSamePortAsAP
     
     gpio_x.pinMode(10, mcp23s17::PinMode::INPUT_PULLUP);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x01, ((_spi_transaction[5] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[5] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -495,7 +500,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinLessThanEightTHENAMaskWit
     
     gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x00, ((_spi_transaction[5] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::UNSET, static_cast<BitValue>((_spi_transaction[5] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -509,7 +514,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinGreaterThanOrEqualToEight
     
     gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x00, ((_spi_transaction[5] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::UNSET, static_cast<BitValue>((_spi_transaction[5] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -536,7 +541,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromADifferentPortThanThe
     
     gpio_x.pinMode(10, mcp23s17::PinMode::INPUT);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::IODIRA)] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x00, ((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPPUA)] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::UNSET, static_cast<BitValue>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPPUA)] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -563,7 +568,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromTheSamePortAsAPreviou
     
     gpio_x.pinMode(10, mcp23s17::PinMode::INPUT);
     ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
-    EXPECT_EQ(0x00, ((_spi_transaction[5] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::UNSET, static_cast<BitValue>((_spi_transaction[5] >> BIT_POSITION) & 0x01));
     ASSERT_LT(5, _index);
 }
 
@@ -577,7 +582,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputAfterInputPullupOnSamePinTHENO
     
     gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
     ASSERT_EQ(mcp23s17::ControlRegister::GPPUA, static_cast<mcp23s17::ControlRegister>(_spi_transaction[1]));
-    EXPECT_EQ(0x00, ((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::UNSET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_EQ(3, _index);
 }
 
