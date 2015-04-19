@@ -110,6 +110,12 @@ TEST(Construction, WHENObjectIsConstructedTHENSPIBeginIsCalled) {
     EXPECT_EQ(true, SPI._has_begun);
 }
 
+TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENTheCallersChipSelectPinIsPulledFromHighToLowAndBackOneTime) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    EXPECT_EQ(MOCK::PinTransition::HIGH_TO_LOW, MOCK::getPinTransition(SS)[0]);
+    EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS)[1]);
+}
+
 /*
 Like TEST(), the first argument is the test case name, but for TEST_F()
 this must be the name of the test fixture class.

@@ -20,7 +20,11 @@ mcp23s17::mcp23s17 (
     _control_register_address{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 }
 {
     SPI.begin();
-    //TODO: Set IOCON:HAEN bit
+    
+    // Set IOCON:HAEN bit
+    ::digitalWrite(SS, LOW);
+    ::digitalWrite(SS, HIGH);
+    
     //TODO: Load cache from chip registers
     return;
 }
