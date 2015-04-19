@@ -540,6 +540,33 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromADifferentPortThanThe
     ASSERT_LT(5, _index);
 }
 
+TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinOnPullupRegisterIsNotDisturbed) {
+    const uint8_t PIN = 8;
+    const uint8_t BIT_POSITION = PIN % 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::INPUT_PULLUP);
+    ResetSpi();
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT_PULLUP);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+    ASSERT_LT(5, _index);
+    ResetSpi();
+    
+    gpio_x.pinMode(10, mcp23s17::PinMode::INPUT);
+    ASSERT_EQ(mcp23s17::PinMode::INPUT, static_cast<mcp23s17::PinMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(0x00, ((_spi_transaction[5] >> BIT_POSITION) & 0x01));
+    ASSERT_LT(5, _index);
+}
+
   /****************/
  /* digitalWrite */
 /****************/

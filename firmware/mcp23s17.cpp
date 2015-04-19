@@ -145,21 +145,12 @@ mcp23s17::pinMode (
     SPI.transfer(latch_register_cache);
     ::digitalWrite(SS, HIGH);
     
-    // Send data to GPPU[A|B] registers on mcp23s17::PinMode::INPUT_PULLUP
-    if ( PinMode::INPUT_PULLUP == mode_ ) {
+    // Send data to GPPU[A|B] registers
+    if ( PinMode::OUTPUT != mode_ ) {
         ::digitalWrite(SS, LOW);
         SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
         SPI.transfer(static_cast<uint8_t>(pullup_register));
         SPI.transfer(pullup_register_cache);
-        ::digitalWrite(SS, HIGH);
-    }
-    
-    // Send data to GPPU[A|B] registers on mcp23s17::PinMode::INPUT
-    if ( PinMode::INPUT == mode_ ) {
-        ::digitalWrite(SS, LOW);
-        SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
-        SPI.transfer(static_cast<uint8_t>(pullup_register));
-        SPI.transfer(~bit_mask);
         ::digitalWrite(SS, HIGH);
     }
     
