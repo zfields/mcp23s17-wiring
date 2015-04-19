@@ -133,11 +133,10 @@ mcp23s17::pinMode (
         break;
     }
     
-    // Test to see if bit is already set
+    // Send data to IODIR[A|B] registers, if necessary
     if ( _control_register[static_cast<uint8_t>(latch_register)] != latch_register_cache ) {
         _control_register[static_cast<uint8_t>(latch_register)] = latch_register_cache;
         
-        // Send data to IODIR[A|B] registers
         ::digitalWrite(SS, LOW);
         SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
         SPI.transfer(static_cast<uint8_t>(latch_register));
@@ -145,10 +144,10 @@ mcp23s17::pinMode (
         ::digitalWrite(SS, HIGH);
     }
 
-    _control_register[static_cast<uint8_t>(pullup_register)] = pullup_register_cache;
-    
-    // Send data to GPPU[A|B] registers
-    if ( PinMode::OUTPUT != mode_ ) {
+    // Send data to GPPU[A|B] registers, if necessary
+    if ( _control_register[static_cast<uint8_t>(pullup_register)] != pullup_register_cache ) {
+        _control_register[static_cast<uint8_t>(pullup_register)] = pullup_register_cache;
+        
         ::digitalWrite(SS, LOW);
         SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
         SPI.transfer(static_cast<uint8_t>(pullup_register));
