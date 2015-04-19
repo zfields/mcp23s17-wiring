@@ -152,6 +152,12 @@ mcp23s17::pinMode (
         ::digitalWrite(SS, HIGH);
     }
     
+    // Send data to GPPU[A|B] registers on mcp23s17::PinMode::INPUT
+    if ( PinMode::INPUT == mode_ ) {
+        ::digitalWrite(SS, LOW);
+        ::digitalWrite(SS, HIGH);
+    }
+    
     return;
 }
 
