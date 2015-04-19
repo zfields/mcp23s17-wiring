@@ -156,7 +156,7 @@ mcp23s17::pinMode (
         ::digitalWrite(SS, LOW);
         SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
         SPI.transfer(static_cast<uint8_t>(pullup_register));
-        SPI.transfer(bit_mask);
+        SPI.transfer(~bit_mask);
         ::digitalWrite(SS, HIGH);
     }
     
