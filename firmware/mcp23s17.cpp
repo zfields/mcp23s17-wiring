@@ -156,6 +156,7 @@ mcp23s17::pinMode (
     if ( PinMode::INPUT == mode_ ) {
         ::digitalWrite(SS, LOW);
         SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+        SPI.transfer(static_cast<uint8_t>(ControlRegister::GPPUA));
         ::digitalWrite(SS, HIGH);
     }
     

@@ -459,6 +459,19 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputTHENAnotherWriteTransactionIsS
     ASSERT_LT(3, _index);
 }
 
+TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinLessThanEightTHENTheGPPUARegisterIsTargeted) {
+    const uint8_t PIN = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::OUTPUT);
+    ResetSpi();
+    
+    gpio_x.pinMode(PIN, mcp23s17::PinMode::INPUT);
+    ASSERT_EQ(mcp23s17::ControlRegister::IODIRA, static_cast<mcp23s17::ControlRegister>(_spi_transaction[1]));
+    EXPECT_EQ(mcp23s17::ControlRegister::GPPUA, static_cast<mcp23s17::ControlRegister>(_spi_transaction[4]));
+    ASSERT_LT(4, _index);
+}
+
   /****************/
  /* digitalWrite */
 /****************/
