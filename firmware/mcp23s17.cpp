@@ -130,7 +130,6 @@ mcp23s17::pinMode (
         break;
     }
     
-    //TODO: When OUTPUT is written, then GPPU[A|B] are not modified.
     // Test to see if bit is already set
     if ( _control_register[static_cast<uint8_t>(latch_register)] == latch_register_cache ) { return; }
     _control_register[static_cast<uint8_t>(latch_register)] = latch_register_cache;
@@ -157,6 +156,7 @@ mcp23s17::pinMode (
         ::digitalWrite(SS, LOW);
         SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
         SPI.transfer(static_cast<uint8_t>(pullup_register));
+        SPI.transfer(static_cast<uint8_t>(1) << pin_);
         ::digitalWrite(SS, HIGH);
     }
     
