@@ -134,6 +134,12 @@ TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENTheIOCONARegisterIsT
     ASSERT_LT(1, _index);
 }
 
+TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENTheHAENBitIsSet) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    EXPECT_EQ(mcp23s17::IOConfigurationRegister::HAEN, static_cast<mcp23s17::IOConfigurationRegister>(_spi_transaction[2]));
+    ASSERT_LT(2, _index);
+}
+
 /*
 Like TEST(), the first argument is the test case name, but for TEST_F()
 this must be the name of the test fixture class.
@@ -145,6 +151,7 @@ this must be the name of the test fixture class.
 
 TEST_F(MockSPITransfer, pinMode$WHENNotCalledTHENTheCallersChipSelectPinIsHigh) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    ResetSpi();
     EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, static_cast<mcp23s17::PinLatchValue>(MOCK::getPinLatchValue(SS)));
     ASSERT_EQ(0, _index);
 }

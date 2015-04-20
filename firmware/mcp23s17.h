@@ -61,6 +61,26 @@ class mcp23s17 {
         REGISTER_COUNT,
     };
     
+    /// \brief I/O Control Register
+    /// \n Unimplemented (bit 0) - Read as ‘0’.
+    /// \n INTPOL (bit 1) - This bit sets the polarity of the INT output pin.
+    /// \n ODR (bit 2) - This bit configures the INT pin as an open-drain output.
+    /// \n HAEN (bit 3) - Hardware Address Enable bit (MCP23S17 only).
+    /// \n DISSLW (bit 4) - Slew Rate control bit for SDA output.
+    /// \n SEQOP (bit 5) - Sequential Operation mode bit.
+    /// \n MIRROR (bit 6) - INT Pins Mirror bit
+    /// \n BANK (bit 7) - Controls how the registers are addressed
+    enum class IOConfigurationRegister : uint8_t {
+        RESERVED = 0x01,
+        INTPOL = 0x02,
+        ODR = 0x04,
+        HAEN = 0x08,
+        DISSLW = 0x10,
+        SEQOP = 0x20,
+        MIRROR = 0x40,
+        BANK = 0x80,
+    };
+    
     /// \brief The hardware address of the chip
     /// \detail The chip has three pins A0, A1 and A2 dedicated
     /// to supplying an individual address to a chip, which
