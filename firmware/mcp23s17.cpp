@@ -23,6 +23,7 @@ mcp23s17::mcp23s17 (
     
     // Set IOCON:HAEN bit
     ::digitalWrite(SS, LOW);
+    SPI.transfer(0x41);
     ::digitalWrite(SS, HIGH);
     
     //TODO: Load cache from chip registers
