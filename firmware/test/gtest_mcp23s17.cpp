@@ -101,7 +101,11 @@ TEST(Construction, WHENObjectIsConstructedTHENControlRegisterValuesArePopulated)
         EXPECT_EQ(0xFF, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
     }
     for ( ; i < static_cast<int>(mcp23s17::ControlRegister::REGISTER_COUNT) ; ++i ) {
-        EXPECT_EQ(0x00, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
+        if ( static_cast<uint8_t>(mcp23s17::ControlRegister::IOCONA) == i ) {
+            EXPECT_EQ(static_cast<uint8_t>(mcp23s17::IOConfigurationRegister::HAEN), gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
+        } else {
+            EXPECT_EQ(0x00, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
+        }
     }
 }
 

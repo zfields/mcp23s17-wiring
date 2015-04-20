@@ -21,14 +21,17 @@ mcp23s17::mcp23s17 (
 {
     SPI.begin();
     
+    //TODO: Load cache from chip registers (requires special handling if IOCON:HAEN is unset, or IOCON:BANK is set).
+    
     // Set IOCON:HAEN bit
+    _control_register[static_cast<uint8_t>(mcp23s17::ControlRegister::IOCONA)] |= static_cast<uint8_t>(IOConfigurationRegister::HAEN);
+    
     ::digitalWrite(SS, LOW);
     SPI.transfer(0x40);
     SPI.transfer(static_cast<uint8_t>(ControlRegister::IOCONA));
     SPI.transfer(static_cast<uint8_t>(IOConfigurationRegister::HAEN));
     ::digitalWrite(SS, HIGH);
     
-    //TODO: Load cache from chip registers
     return;
 }
 

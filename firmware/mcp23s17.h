@@ -64,14 +64,28 @@ class mcp23s17 {
     /// \brief I/O Control Register
     /// \n Unimplemented (bit 0) - Read as ‘0’.
     /// \n INTPOL (bit 1) - This bit sets the polarity of the INT output pin.
+    /// \n - 0 = Active-low.
+    /// \n - 1 = Active-high.
     /// \n ODR (bit 2) - This bit configures the INT pin as an open-drain output.
-    /// \n HAEN (bit 3) - Hardware Address Enable bit (MCP23S17 only).
+    /// \n - 0 = Active driver output (INTPOL bit sets the polarity).
+    /// \n - 1 = Open-drain output (overrides the INTPOL bit).
+    /// \n HAEN (bit 3) - Hardware Address Enable bit (MCP23S17 only, address pins are always enabled on MCP23017).
+    /// \n - 0 = Disables the MCP23S17 address pins.
+    /// \n - 1 = Enables the MCP23S17 address pins.
     /// \n DISSLW (bit 4) - Slew Rate control bit for SDA output.
+    /// \n - 0 = Slew rate enabled.
+    /// \n - 1 = Slew rate disabled.
     /// \n SEQOP (bit 5) - Sequential Operation mode bit.
+    /// \n - 0 = Sequential operation enabled, address pointer increments.
+    /// \n - 1 = Sequential operation disabled, address pointer does not increment.
     /// \n MIRROR (bit 6) - INT Pins Mirror bit
+    /// \n - 0 = The INT pins are not connected. INTA is associated with PortA and INTB is associated with PortB
+    /// \n - 1 = The INT pins are internally connected
     /// \n BANK (bit 7) - Controls how the registers are addressed
+    /// \n - 0 = The registers are in the same bank (addresses are sequential)
+    /// \n - 1 = The registers associated with each port are separated into different banks
     enum class IOConfigurationRegister : uint8_t {
-        RESERVED = 0x01,
+        UNIMPLEMENTED = 0x01,
         INTPOL = 0x02,
         ODR = 0x04,
         HAEN = 0x08,
