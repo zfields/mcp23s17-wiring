@@ -128,6 +128,12 @@ TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENAWriteTransactionIsS
     ASSERT_LT(0, _index);
 }
 
+TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENTheIOCONARegisterIsTargeted) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    EXPECT_EQ(mcp23s17::ControlRegister::IOCONA, static_cast<mcp23s17::ControlRegister>(_spi_transaction[1]));
+    ASSERT_LT(1, _index);
+}
+
 /*
 Like TEST(), the first argument is the test case name, but for TEST_F()
 this must be the name of the test fixture class.

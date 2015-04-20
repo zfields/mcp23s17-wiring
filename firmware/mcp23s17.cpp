@@ -24,6 +24,7 @@ mcp23s17::mcp23s17 (
     // Set IOCON:HAEN bit
     ::digitalWrite(SS, LOW);
     SPI.transfer(0x40);
+    SPI.transfer(static_cast<uint8_t>(ControlRegister::IOCONA));
     ::digitalWrite(SS, HIGH);
     
     //TODO: Load cache from chip registers
