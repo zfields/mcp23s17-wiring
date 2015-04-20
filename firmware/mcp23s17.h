@@ -12,10 +12,10 @@ class mcp23s17 {
     /// \brief Pin Latch Value
     /// \note HIGH => Vcc
     /// \n LOW => GND
-    enum class PinLatchValue {
-        LOW = 0,
-        HIGH,
-    };
+    //enum class PinLatchValue {
+    //    LOW = 0,
+    //    HIGH,
+    //};
     
     /// \brief Pin Modes
     /// \note INPUT_PULLUP uses an internal 100kΩ resistor
@@ -54,8 +54,8 @@ class mcp23s17 {
         INTFB,
         INTCAPA,
         INTCAPB,
-        GPIOA,
-        GPIOB,
+        GPIOA_,
+        GPIOB_,
         OLATA,
         OLATB,
         REGISTER_COUNT,
@@ -136,7 +136,7 @@ class mcp23s17 {
     /// \brief Read from GPIO pins
     /// \param [in] pin_ The number associated with the pin
     /// \return HIGH or LOW based on the voltage level on the pin
-    PinLatchValue
+    uint8_t
     digitalRead (
         const uint8_t pin_
     ) const;
@@ -149,7 +149,7 @@ class mcp23s17 {
     void
     digitalWrite (
         const uint8_t pin_,
-        const PinLatchValue value_
+        const uint8_t value_
     );
     
     /// \brief Set pin mode

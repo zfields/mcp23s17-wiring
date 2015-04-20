@@ -35,24 +35,24 @@ mcp23s17::mcp23s17 (
     return;
 }
 
-mcp23s17::PinLatchValue
+uint8_t
 mcp23s17::digitalRead (
     const uint8_t pin_
 ) const {
     const unsigned int bit_pos(pin_ % 8);
     
-    ControlRegister latch_register(ControlRegister::GPIOA);
+    ControlRegister latch_register(ControlRegister::GPIOA_);
     ControlRegister direction_register(ControlRegister::IODIRA);
     uint8_t port_latch_values(0x00);
     
     // Select the appropriate port
     if ( pin_ / 8 ) {
-        latch_register = ControlRegister::GPIOB;
+        latch_register = ControlRegister::GPIOB_;
         direction_register = ControlRegister::IODIRB;
     }
     
     // Check to see if device is in the proper state
-    if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> bit_pos) & 0x01) ) { return PinLatchValue::LOW; }
+    if ( PinMode::OUTPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> bit_pos) & 0x01) ) { return LOW; }
     
     // Send data
     ::digitalWrite(SS, LOW);
@@ -61,24 +61,24 @@ mcp23s17::digitalRead (
     port_latch_values = SPI.transfer(static_cast<uint8_t>(latch_register));  // Arbitrary bit to flush result buffer. `latch_register` is selected, because it is guaranteed to be in active memory.
     ::digitalWrite(SS, HIGH);
     
-    return static_cast<PinLatchValue>((port_latch_values >> bit_pos) & 0x01);
+    return ((port_latch_values >> bit_pos) & 0x01);
 }
 
 void
 mcp23s17::digitalWrite (
     const uint8_t pin_,
-    const PinLatchValue value_
+    const uint8_t value_
 ) {
     const unsigned int bit_pos(pin_ % 8);
     const uint8_t bit_mask(static_cast<uint8_t>(1) << bit_pos);
     
-    ControlRegister latch_register(ControlRegister::GPIOA);
+    ControlRegister latch_register(ControlRegister::GPIOA_);
     ControlRegister direction_register(ControlRegister::IODIRA);
     uint8_t registry_value;
     
     // Select the appropriate port
     if ( pin_ / 8 ) {
-        latch_register = ControlRegister::GPIOB;
+        latch_register = ControlRegister::GPIOB_;
         direction_register = ControlRegister::IODIRB;
     }
     
@@ -87,7 +87,7 @@ mcp23s17::digitalWrite (
     
     // Check cache for exisiting data
     registry_value = _control_register[static_cast<uint8_t>(latch_register)];
-    if ( PinLatchValue::LOW == value_ ) {
+    if ( LOW == value_ ) {
         registry_value &= ~bit_mask;
     } else {
         registry_value |= bit_mask;
