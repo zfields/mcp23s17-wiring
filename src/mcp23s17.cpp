@@ -98,13 +98,13 @@ mcp23s17::digitalRead (
 ) const {
     const unsigned int bit_pos(pin_ % 8);
 
-    ControlRegister latch_register(ControlRegister::GPIOA);
+    ControlRegister latch_register(ControlRegister::GPIOA_);
     ControlRegister direction_register(ControlRegister::IODIRA);
     uint8_t port_latch_values(0x00);
 
     // Select the appropriate port
     if ( pin_ / 8 ) {
-        latch_register = ControlRegister::GPIOB;
+        latch_register = ControlRegister::GPIOB_;
         direction_register = ControlRegister::IODIRB;
     }
 
@@ -129,13 +129,13 @@ mcp23s17::digitalWrite (
     const unsigned int bit_pos(pin_ % 8);
     const uint8_t bit_mask(static_cast<uint8_t>(1) << bit_pos);
 
-    ControlRegister latch_register(ControlRegister::GPIOA);
+    ControlRegister latch_register(ControlRegister::GPIOA_);
     ControlRegister direction_register(ControlRegister::IODIRA);
     uint8_t registry_value;
 
     // Select the appropriate port
     if ( pin_ / 8 ) {
-        latch_register = ControlRegister::GPIOB;
+        latch_register = ControlRegister::GPIOB_;
         direction_register = ControlRegister::IODIRB;
     }
 
