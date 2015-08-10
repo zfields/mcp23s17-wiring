@@ -8,29 +8,7 @@
 class mcp23s17 {
   public:
     // Definition(s)
-    
-    /// \brief Pin Latch Value
-    /// \note HIGH => Vcc
-    /// \n LOW => GND
-    enum class PinLatchValue {
-        LOW = 0,
-        HIGH,
-    };
-    
-    /// \brief Pin Modes
-    /// \note INPUT_PULLUP uses an internal 100kΩ resistor
-    /// \note The pull-up resistor will provide 40-115uA of current
-    enum class PinMode {
-        OUTPUT = 0,
-        INPUT,
-        INPUT_PULLUP,
-    };
-    
-    /// \brief Register Transaction Flag
-    enum class RegisterTransaction : uint8_t {
-        WRITE = 0,
-        READ,
-    };
+    typedef void(*isr_t)(void);
     
     /// \brief Control Registers
     /// \note IOCONA is equivalent to IOCONB
@@ -59,6 +37,30 @@ class mcp23s17 {
         OLATA,
         OLATB,
         REGISTER_COUNT,
+    };
+    
+    /// \brief The hardware address of the chip
+    /// \detail The chip has three pins A0, A1 and A2 dedicated
+    /// to supplying an individual address to a chip, which
+    /// allows up to eight devices on the bus.
+    enum class HardwareAddress : uint8_t {
+        HW_ADDR_0 = 0,
+        HW_ADDR_1,
+        HW_ADDR_2,
+        HW_ADDR_3,
+        HW_ADDR_4,
+        HW_ADDR_5,
+        HW_ADDR_6,
+        HW_ADDR_7,
+    };
+    
+    /// \brief Interrupt Mode
+    enum class InterruptMode {
+        CHANGE = 0,
+        FALLING,
+        HIGH,
+        LOW,
+        RISING,
     };
     
     /// \brief I/O Control Register
@@ -95,19 +97,27 @@ class mcp23s17 {
         BANK = 0x80,
     };
     
-    /// \brief The hardware address of the chip
-    /// \detail The chip has three pins A0, A1 and A2 dedicated
-    /// to supplying an individual address to a chip, which
-    /// allows up to eight devices on the bus.
-    enum class HardwareAddress : uint8_t {
-        HW_ADDR_0 = 0,
-        HW_ADDR_1,
-        HW_ADDR_2,
-        HW_ADDR_3,
-        HW_ADDR_4,
-        HW_ADDR_5,
-        HW_ADDR_6,
-        HW_ADDR_7,
+    /// \brief Pin Latch Value
+    /// \note HIGH => Vcc
+    /// \n LOW => GND
+    enum class PinLatchValue {
+        LOW = 0,
+        HIGH,
+    };
+    
+    /// \brief Pin Modes
+    /// \note INPUT_PULLUP uses an internal 100kΩ resistor
+    /// \note The pull-up resistor will provide 40-115uA of current
+    enum class PinMode {
+        OUTPUT = 0,
+        INPUT,
+        INPUT_PULLUP,
+    };
+    
+    /// \brief Register Transaction Flag
+    enum class RegisterTransaction : uint8_t {
+        WRITE = 0,
+        READ,
     };
     
     // Constructor and destructor method(s)
@@ -131,7 +141,25 @@ class mcp23s17 {
     }
     
     // Public instance variable(s)
+    static const uint8_t PIN_COUNT = 16;
+    
     // Public method(s)
+    
+    /// \brief Attach interrupt to specified pin
+    /// \param [in] pin_ The number associated with the pin
+    /// \param [in] interrupt_service_routine_ The callback to be fired when the interrupt occurs
+    /// \param [in] mode_ The mode of the interrupt
+    /// \n - CHANGE - Signal when pin state changes from previous state
+    /// \n - FALLING - Signal when pin transistions from HIGH to LOW
+    /// \n - HIGH - Signal when pin state is HIGH
+    /// \n - LOW - Signal when pin state is LOW
+    /// \n - RISING - Signal when pin transistions from LOW to HIGH
+    void
+    attachInterrupt (
+        const uint8_t pin_,
+        const isr_t interrupt_service_routine_,
+        const InterruptMode mode_
+    );
     
     /// \brief Read from GPIO pins
     /// \param [in] pin_ The number associated with the pin
@@ -184,9 +212,18 @@ class mcp23s17 {
         return _control_register_address;
     }
     
+    inline
+    isr_t const * const
+    getInterruptServiceRoutines (
+        void
+    ) const {
+        return _interrupt_service_routines;
+    }
+    
   private:
     // Private instance variable(s)
     const uint8_t _SPI_BUS_ADDRESS;
+    isr_t _interrupt_service_routines[PIN_COUNT];
     uint8_t _control_register[static_cast<uint8_t>(ControlRegister::REGISTER_COUNT)];
     uint8_t _control_register_address[static_cast<uint8_t>(ControlRegister::REGISTER_COUNT)];
     

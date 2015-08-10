@@ -23,6 +23,7 @@ class TC_mcp23s17 : public mcp23s17 {
     // Access protected test members
     using mcp23s17::getControlRegister;
     using mcp23s17::getControlRegisterAddresses;
+    using mcp23s17::getInterruptServiceRoutines;
 };
 
 namespace {
@@ -106,6 +107,13 @@ TEST(Construction, WHENObjectIsConstructedTHENControlRegisterValuesArePopulated)
         } else {
             EXPECT_EQ(0x00, gpio_x.getControlRegister()[i]) << "Error at index <" << i << ">!";
         }
+    }
+}
+
+TEST(Construction, WHENObjectIsConstructedTHENInterruptServiceRoutinesArrayIsSetToNullptr) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    for ( int i = 0 ; i < mcp23s17::PIN_COUNT ; ++i ) {
+        EXPECT_EQ(nullptr, gpio_x.getInterruptServiceRoutines()[i]);
     }
 }
 
@@ -1066,6 +1074,10 @@ TEST_F(MockSPITransfer, digitalRead$WHENCalledOnHIGHPinTHENHIGHIsReturned) {
     EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, gpio_x.digitalRead(PIN));
     ASSERT_LT(2, _index);
 }
+
+  /*******************/
+ /* attachInterrupt */
+/*******************/
 
 } // namespace
 /*

@@ -17,7 +17,8 @@ mcp23s17::mcp23s17 (
 ) :
     _SPI_BUS_ADDRESS(0x40 | (static_cast<uint8_t>(hw_addr_) << 1)),
     _control_register{ 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    _control_register_address{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 }
+    _control_register_address{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 },
+    _interrupt_service_routines{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 {
     SPI.begin();
     
@@ -34,6 +35,15 @@ mcp23s17::mcp23s17 (
     
     return;
 }
+
+void
+mcp23s17::attachInterrupt (
+    const uint8_t pin_,
+    const isr_t interrupt_service_routine_,
+    const InterruptMode mode_
+) {
+}
+
 
 mcp23s17::PinLatchValue
 mcp23s17::digitalRead (
