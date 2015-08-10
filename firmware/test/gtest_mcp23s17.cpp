@@ -1079,6 +1079,17 @@ TEST_F(MockSPITransfer, digitalRead$WHENCalledOnHIGHPinTHENHIGHIsReturned) {
  /* attachInterrupt */
 /*******************/
 
+TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENCorrespondingCallbackIsStored) {
+    const uint8_t PIN = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    mcp23s17::isr_t interrupt_service_routine = [](){};
+    
+    ASSERT_EQ(nullptr, gpio_x.getInterruptServiceRoutines()[PIN]);
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    
+    EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[PIN]);
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {
