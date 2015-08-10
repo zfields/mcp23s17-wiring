@@ -42,6 +42,7 @@ mcp23s17::attachInterrupt (
     const isr_t interrupt_service_routine_,
     const InterruptMode mode_
 ) {
+    if ( pin_ >= PIN_COUNT ) { return; }
     _interrupt_service_routines[pin_] = interrupt_service_routine_;
 }
 

@@ -1090,6 +1090,22 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENCorrespondingCallbackIsSto
     EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[PIN]);
 }
 
+TEST_F(MockSPITransfer, attachInterrupt$WHENCalledWithPinGreaterThanOrEqualToPinCountTHENInterruptServiceRoutineArrayIsNotModified) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    mcp23s17::isr_t interrupt_service_routine = [](){};
+    
+    for ( int i = 0 ; i < mcp23s17::PIN_COUNT ; ++i ) {
+        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    }
+    
+    for ( int i = mcp23s17::PIN_COUNT ; i < 256 ; ++i ) {
+        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+        for ( int j = 0 ; j < mcp23s17::PIN_COUNT ; ++j ) {
+            EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[j]);
+        }
+    }
+}
+
 } // namespace
 /*
 int main (int argc, char *argv[]) {
