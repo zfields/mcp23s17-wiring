@@ -155,6 +155,9 @@ mcp23s17::pinMode (
         break;
     }
     
+    //TODO: Move check up while creating tests to ensure no other state is modified
+    if ( pin_ >= PIN_COUNT ) { return; }
+    
     // Send data to IODIR[A|B] registers, if necessary
     if ( _control_register[static_cast<uint8_t>(latch_register)] != latch_register_cache ) {
         _control_register[static_cast<uint8_t>(latch_register)] = latch_register_cache;

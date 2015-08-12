@@ -705,6 +705,16 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinAlreadyInTheCorrectPullupStateTHE
     EXPECT_EQ(0, _index);
 }
 
+TEST_F(MockSPITransfer, pinMode$WHENCalledOnPinGreaterThanOrEqualToPinCountTHENNoSPITransactionOccurs) {
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    
+    for ( int i = mcp23s17::PIN_COUNT ; i < 256 ; ++i ) {
+        ResetSpi();
+        gpio_x.pinMode(i, mcp23s17::PinMode::INPUT_PULLUP);
+        EXPECT_EQ(0, _index) << "Error at index <" << i << ">!";
+    }
+}
+
   /****************/
  /* digitalWrite */
 /****************/
@@ -1101,7 +1111,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledWithPinGreaterThanOrEqualToPin
     for ( int i = mcp23s17::PIN_COUNT ; i < 256 ; ++i ) {
         gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
         for ( int j = 0 ; j < mcp23s17::PIN_COUNT ; ++j ) {
-            EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[j]);
+            EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[j]) << "Error at index <" << j << ">!";
         }
     }
 }
