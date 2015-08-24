@@ -9,7 +9,7 @@ class mcp23s17 {
   public:
     // Definition(s)
     typedef void(*isr_t)(void);
-    
+
     /// \brief Control Registers
     /// \note IOCONA is equivalent to IOCONB
     /// \note As addressed when IOCON.BANK = 0
@@ -38,7 +38,7 @@ class mcp23s17 {
         OLATB,
         REGISTER_COUNT,
     };
-    
+
     /// \brief The hardware address of the chip
     /// \detail The chip has three pins A0, A1 and A2 dedicated
     /// to supplying an individual address to a chip, which
@@ -53,7 +53,7 @@ class mcp23s17 {
         HW_ADDR_6,
         HW_ADDR_7,
     };
-    
+
     /// \brief Interrupt Mode
     enum class InterruptMode {
         CHANGE = 0,
@@ -62,7 +62,7 @@ class mcp23s17 {
         LOW,
         RISING,
     };
-    
+
     /// \brief I/O Control Register
     /// \n Unimplemented (bit 0) - Read as ‘0’.
     /// \n INTPOL (bit 1) - This bit sets the polarity of the INT output pin.
@@ -96,7 +96,7 @@ class mcp23s17 {
         MIRROR = 0x40,
         BANK = 0x80,
     };
-    
+
     /// \brief Pin Latch Value
     /// \note HIGH => Vcc
     /// \n LOW => GND
@@ -104,7 +104,7 @@ class mcp23s17 {
         LOW = 0,
         HIGH,
     };
-    
+
     /// \brief Pin Modes
     /// \note INPUT_PULLUP uses an internal 100kΩ resistor
     /// \note The pull-up resistor will provide 40-115uA of current
@@ -113,23 +113,23 @@ class mcp23s17 {
         INPUT,
         INPUT_PULLUP,
     };
-    
+
     /// \brief Register Transaction Flag
     enum class RegisterTransaction : uint8_t {
         WRITE = 0,
         READ,
     };
-    
+
     // Constructor and destructor method(s)
-    
+
     /// \brief Object Constructor
     /// \param [in] hw_addr_ The hardware address of the device
     mcp23s17 (
         const HardwareAddress hw_addr_
     );
-    
+
     // Accessor method(s)
-    
+
     /// \brief Hardware address of device
     /// \return Hardware address of the device
     inline
@@ -139,12 +139,12 @@ class mcp23s17 {
     ) const {
         return _SPI_BUS_ADDRESS;
     }
-    
+
     // Public instance variable(s)
     static const uint8_t PIN_COUNT = 16;
-    
+
     // Public method(s)
-    
+
     /// \brief Attach interrupt to specified pin
     /// \param [in] pin_ The number associated with the pin
     /// \param [in] interrupt_service_routine_ The callback to be fired when the interrupt occurs
@@ -160,7 +160,7 @@ class mcp23s17 {
         const isr_t interrupt_service_routine_,
         const InterruptMode mode_
     );
-    
+
     /// \brief Read from GPIO pins
     /// \param [in] pin_ The number associated with the pin
     /// \return HIGH or LOW based on the voltage level on the pin
@@ -168,7 +168,7 @@ class mcp23s17 {
     digitalRead (
         const uint8_t pin_
     ) const;
-    
+
     /// \brief Write HIGH or LOW on pins
     /// \param [in] pin_ The number associated with the pin
     /// \param [in] value_ The value set to the latch
@@ -179,7 +179,7 @@ class mcp23s17 {
         const uint8_t pin_,
         const PinLatchValue value_
     );
-    
+
     /// \brief Set pin mode
     /// \param [in] pin_ The number associated with the pin
     /// \param [in] mode_ The direction to set the GPIO pins
@@ -192,41 +192,41 @@ class mcp23s17 {
         const uint8_t pin_,
         const PinMode mode_
     );
-    
+
   protected:
     // Protected instance variable(s)
     // Protected method(s)
     inline
-    uint8_t const * const
+    uint8_t const *
     getControlRegister (
         void
     ) const {
         return _control_register;
     }
-    
+
     inline
-    uint8_t const * const
+    uint8_t const *
     getControlRegisterAddresses (
         void
     ) const {
         return _control_register_address;
     }
-    
+
     inline
-    isr_t const * const
+    isr_t const *
     getInterruptServiceRoutines (
         void
     ) const {
         return _interrupt_service_routines;
     }
-    
+
   private:
     // Private instance variable(s)
     const uint8_t _SPI_BUS_ADDRESS;
-    isr_t _interrupt_service_routines[PIN_COUNT];
     uint8_t _control_register[static_cast<uint8_t>(ControlRegister::REGISTER_COUNT)];
     uint8_t _control_register_address[static_cast<uint8_t>(ControlRegister::REGISTER_COUNT)];
-    
+    isr_t _interrupt_service_routines[PIN_COUNT];
+
     // Private method(s)
 };
 

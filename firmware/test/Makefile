@@ -16,7 +16,7 @@
 # in your own targets but shouldn't modify.
 
 # Points (absolutely) to the root of Google Mock.
-GMOCK_DIR = /usr/local/gmock-1.7.0
+GMOCK_DIR = /usr/src/gmock
 
 # Points to the root of Google Test, as a sub-directory of Google Mock.
 # Remember to tweak this if you want to use a copy of Google Test at a
@@ -38,14 +38,13 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include \
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g \
-#           -pthread \
+            -pthread \
             -Wall \
             -Wextra \
-            -Wno-c++11-extensions \
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-UNDER_TEST = mcp23s17
+TEST_SUITE = gtest_$(UNDER_TEST)
 MOCK_WIRING = MOCK_wiring
 
 # All Google Test headers. Usually you shouldn't change this
@@ -79,7 +78,7 @@ GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc \
               $(GTEST_HEADERS) \
 
 GMOCK_SRCS_ = $(GMOCK_DIR)/src/*.cc \
-              $(GMOCK_HEADERS) \
+#              $(GMOCK_HEADERS) \
 
 # For simplicity and to avoid depending on implementation details of
 # Google Mock and Google Test, the dependencies specified below are
@@ -88,15 +87,15 @@ GMOCK_SRCS_ = $(GMOCK_DIR)/src/*.cc \
 # changes.
 
 gtest-all.o : $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) -I$(GMOCK_DIR) -I$(CODE_DIR) $(CXXFLAGS) \
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) -I$(GMOCK_DIR) -I$(CODE_DIR) $(CXXFLAGS) $(COMMAND_LINE_FLAGS) \
     -c $(GTEST_DIR)/src/gtest-all.cc
 
 gmock-all.o : $(GMOCK_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) -I$(GMOCK_DIR) -I$(CODE_DIR) $(CXXFLAGS) \
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) -I$(GMOCK_DIR) -I$(CODE_DIR) $(CXXFLAGS) $(COMMAND_LINE_FLAGS) \
     -c $(GMOCK_DIR)/src/gmock-all.cc
 
 gmock_main.o : $(GMOCK_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) -I$(GMOCK_DIR) -I$(CODE_DIR) $(CXXFLAGS) \
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) -I$(GMOCK_DIR) -I$(CODE_DIR) $(CXXFLAGS) $(COMMAND_LINE_FLAGS) \
     -c $(GMOCK_DIR)/src/gmock_main.cc
 
 gmock.a : gmock-all.o gtest-all.o
@@ -112,24 +111,24 @@ gmock_main.a : gmock-all.o gtest-all.o gmock_main.o
 
 $(MOCK_WIRING).o : $(TEST_DIR)/$(MOCK_WIRING).cpp \
                 $(TEST_DIR)/$(MOCK_WIRING).h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(COMMAND_LINE_FLAGS) \
     -c $(TEST_DIR)/$(MOCK_WIRING).cpp
 
 $(UNDER_TEST).o : $(CODE_DIR)/$(UNDER_TEST).cpp \
                   $(CODE_DIR)/$(UNDER_TEST).h \
                   $(TEST_DIR)/$(MOCK_WIRING).h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(COMMAND_LINE_FLAGS) \
     -c $(CODE_DIR)/$(UNDER_TEST).cpp
 
 $(TEST_SUITE).o : $(TEST_DIR)/$(TEST_SUITE).cpp \
                   $(CODE_DIR)/$(UNDER_TEST).h \
                   $(TEST_DIR)/$(MOCK_WIRING).h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(COMMAND_LINE_FLAGS) \
     -c $(TEST_DIR)/$(TEST_SUITE).cpp
 
 $(TEST_SUITE) : $(MOCK_WIRING).o \
                 $(UNDER_TEST).o \
                 $(TEST_SUITE).o \
                 gmock_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(CODERUNNER_FLAGS) \
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(COMMAND_LINE_FLAGS) \
     -lpthread $^ -o $@

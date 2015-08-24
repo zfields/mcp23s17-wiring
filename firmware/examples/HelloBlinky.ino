@@ -1,4 +1,4 @@
-/****************/
+  /****************/
  /* Hello Blinky */
 /****************/
 #include "mcp23s17/mcp23s17.h"
@@ -11,9 +11,9 @@ void setup (void) {
 }
 
 void loop (void) {
-    gpio_x.digitalWrite(LED_PIN, HIGH);
+    gpio_x.digitalWrite(LED_PIN, mcp23s17::PinLatchValue::HIGH);
     delay(500);
-    gpio_x.digitalWrite(LED_PIN, LOW);
+    gpio_x.digitalWrite(LED_PIN, mcp23s17::PinLatchValue::LOW);
     delay(500);
 }
 
