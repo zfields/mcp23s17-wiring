@@ -142,6 +142,7 @@ class mcp23s17 {
 
     // Public instance variable(s)
     static const uint8_t PIN_COUNT = 16;
+    static const uint8_t SPI_BASE_ADDRESS = 0x40;
 
     // Public method(s)
 

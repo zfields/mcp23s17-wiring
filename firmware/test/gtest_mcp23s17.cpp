@@ -128,9 +128,9 @@ TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENTheCallersChipSelect
     EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS)[1]);
 }
 
-TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENATransactionIsSentToDefaultAddress0x40) {
+TEST_F(MockSPITransfer, mcp23s17$WHENObjectIsConstructedTHENATransactionIsSentToSPIBaseAddress) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
-    EXPECT_EQ(0x40, (_spi_transaction[0] & 0xFE));
+    EXPECT_EQ(static_cast<uint8_t>(mcp23s17::SPI_BASE_ADDRESS), (_spi_transaction[0] & 0xFE));
     ASSERT_LT(0, _index);
 }
 

@@ -15,7 +15,7 @@
 mcp23s17::mcp23s17 (
     const HardwareAddress hw_addr_
 ) :
-    _SPI_BUS_ADDRESS(0x40 | (static_cast<uint8_t>(hw_addr_) << 1)),
+    _SPI_BUS_ADDRESS(SPI_BASE_ADDRESS | (static_cast<uint8_t>(hw_addr_) << 1)),
     _control_register{ 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
     _control_register_address{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 },
     _interrupt_service_routines{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
@@ -28,9 +28,9 @@ mcp23s17::mcp23s17 (
     _control_register[static_cast<uint8_t>(mcp23s17::ControlRegister::IOCONA)] |= static_cast<uint8_t>(IOConfigurationRegister::HAEN);
 
     ::digitalWrite(SS, LOW);
-    SPI.transfer(0x40);
     SPI.transfer(static_cast<uint8_t>(ControlRegister::IOCONA));
     SPI.transfer(static_cast<uint8_t>(IOConfigurationRegister::HAEN));
+    SPI.transfer(SPI_BASE_ADDRESS);
     ::digitalWrite(SS, HIGH);
 
     return;
