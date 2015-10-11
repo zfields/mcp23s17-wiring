@@ -1152,6 +1152,17 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENATransactionIsSentToTheHar
     EXPECT_EQ(gpio_x.getSpiBusAddress(), (_spi_transaction[0] & 0xFE));
     ASSERT_LT(0, _index);
 }
+
+TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENAWriteTransactionIsSent) {
+    const uint8_t PIN = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    mcp23s17::isr_t interrupt_service_routine = [](){};
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    EXPECT_EQ(mcp23s17::RegisterTransaction::WRITE, static_cast<mcp23s17::RegisterTransaction>(_spi_transaction[0] & 0x01));
+    ASSERT_LT(0, _index);
+}
 //TODO: invokeInterruptServiceRoutine() - Function to call interrupt routines upon interrupt from MCP23S17
 
 } // namespace
