@@ -20,17 +20,17 @@ mcp23s17::mcp23s17 (
     _control_register_address{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 },
     _interrupt_service_routines{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 {
-    SPI.begin();
+    ::SPI.begin();
 
-    //TODO: Load cache from chip registers (requires special handling if IOCON:HAEN is unset, or IOCON:BANK is set).
+    //TODO: Load cache from chip registers (requires special handling if IOCON:HAEN is unset, or IOCON:BANK is set), or use a capture a reset pin so the chip can be put in a known state.
 
     // Set IOCON:HAEN bit
     _control_register[static_cast<uint8_t>(mcp23s17::ControlRegister::IOCONA)] |= static_cast<uint8_t>(IOConfigurationRegister::HAEN);
 
     ::digitalWrite(SS, LOW);
-    SPI.transfer(static_cast<uint8_t>(ControlRegister::IOCONA));
-    SPI.transfer(static_cast<uint8_t>(IOConfigurationRegister::HAEN));
-    SPI.transfer(SPI_BASE_ADDRESS);
+    ::SPI.transfer(SPI_BASE_ADDRESS);
+    ::SPI.transfer(static_cast<uint8_t>(ControlRegister::IOCONA));
+    ::SPI.transfer(static_cast<uint8_t>(IOConfigurationRegister::HAEN));
     ::digitalWrite(SS, HIGH);
 
     return;
@@ -69,9 +69,9 @@ mcp23s17::digitalRead (
 
     // Send data
     ::digitalWrite(SS, LOW);
-    SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::READ));
-    SPI.transfer(static_cast<uint8_t>(latch_register));
-    port_latch_values = SPI.transfer(static_cast<uint8_t>(latch_register));  // Arbitrary bit to flush result buffer. `latch_register` is selected, because it is guaranteed to be in active memory.
+    ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::READ));
+    ::SPI.transfer(static_cast<uint8_t>(latch_register));
+    port_latch_values = ::SPI.transfer(static_cast<uint8_t>(latch_register));  // Arbitrary bit to flush result buffer. `latch_register` is selected, because it is guaranteed to be in active memory.
     ::digitalWrite(SS, HIGH);
 
     return static_cast<PinLatchValue>((port_latch_values >> bit_pos) & 0x01);
@@ -112,9 +112,9 @@ mcp23s17::digitalWrite (
 
     // Send data
     ::digitalWrite(SS, LOW);
-    SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
-    SPI.transfer(static_cast<uint8_t>(latch_register));
-    SPI.transfer(registry_value);
+    ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+    ::SPI.transfer(static_cast<uint8_t>(latch_register));
+    ::SPI.transfer(registry_value);
     ::digitalWrite(SS, HIGH);
 
     return;
@@ -164,9 +164,9 @@ mcp23s17::pinMode (
         _control_register[static_cast<uint8_t>(latch_register)] = latch_register_cache;
 
         ::digitalWrite(SS, LOW);
-        SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
-        SPI.transfer(static_cast<uint8_t>(latch_register));
-        SPI.transfer(latch_register_cache);
+        ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+        ::SPI.transfer(static_cast<uint8_t>(latch_register));
+        ::SPI.transfer(latch_register_cache);
         ::digitalWrite(SS, HIGH);
     }
 
@@ -175,9 +175,9 @@ mcp23s17::pinMode (
         _control_register[static_cast<uint8_t>(pullup_register)] = pullup_register_cache;
 
         ::digitalWrite(SS, LOW);
-        SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
-        SPI.transfer(static_cast<uint8_t>(pullup_register));
-        SPI.transfer(pullup_register_cache);
+        ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+        ::SPI.transfer(static_cast<uint8_t>(pullup_register));
+        ::SPI.transfer(pullup_register_cache);
         ::digitalWrite(SS, HIGH);
     }
 
