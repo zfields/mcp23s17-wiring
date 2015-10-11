@@ -45,6 +45,10 @@ mcp23s17::attachInterrupt (
     //if ( pin_ >= PIN_COUNT ) { return; }
     //if ( !interrupt_service_routine_ ) { return; }
     _interrupt_service_routines[pin_] = interrupt_service_routine_;
+
+    // Three bytes are required to update a single register. Therefore, if a comparison-based interrupt is requested, then both ports of all three registers are written at once to optimize the transfer by one byte. Otherwise, if a change-based interrupt is requested, then it is more efficient to write two transactions to the to the specific ports and registers.
+    ::digitalWrite(SS, LOW);
+    ::digitalWrite(SS, HIGH);
 }
 
 

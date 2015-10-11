@@ -1129,6 +1129,18 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledWithNullFunctionPointerTHENInt
     }
 }
 */
+TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENTheCallersChipSelectPinIsPulledFromHighToLowAndBackOneTime) {
+    const uint8_t PIN = 3;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    mcp23s17::isr_t interrupt_service_routine = [](){};
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    EXPECT_EQ(MOCK::PinTransition::HIGH_TO_LOW, MOCK::getPinTransition(SS)[0]);
+    EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS)[1]);
+    ASSERT_EQ(MOCK::PinTransition::NO_TRANSITION, MOCK::getPinTransition(SS)[2]);
+    ASSERT_EQ(MOCK::PinTransition::NO_TRANSITION, MOCK::getPinTransition(SS)[3]);
+}
 //TODO: invokeInterruptServiceRoutine() - Function to call interrupt routines upon interrupt from MCP23S17
 
 } // namespace
