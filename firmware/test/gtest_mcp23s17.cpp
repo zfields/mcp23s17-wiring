@@ -41,7 +41,7 @@ class MockSPITransfer : public ::testing::Test {
         _index(0),
         _input_latch_port(0xFF),
         _spi_transaction(nullptr),
-        _spi_transaction_length(6)
+        _spi_transaction_length(8)
     {
         // This happens before SetUp()
     }
@@ -65,7 +65,7 @@ class MockSPITransfer : public ::testing::Test {
         delete[](_spi_transaction);
     }
 
-    void ResetSpi (size_t spi_transaction_length_ = 6) {
+    void ResetSpi (size_t spi_transaction_length_ = 8) {
         _index = 0;
         _spi_transaction_length = spi_transaction_length_;
         delete[](_spi_transaction);
@@ -1098,7 +1098,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENCorrespondingCallbackIsSto
 
     EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[PIN]);
 }
-
+/*
 TEST_F(MockSPITransfer, attachInterrupt$WHENCalledWithPinGreaterThanOrEqualToPinCountTHENInterruptServiceRoutineArrayIsNotModified) {
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
     mcp23s17::isr_t interrupt_service_routine = [](){};
@@ -1128,6 +1128,8 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledWithNullFunctionPointerTHENInt
         EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[i]) << "Error at index <" << i << ">!";
     }
 }
+*/
+//TODO: invokeInterruptServiceRoutine() - Function to call interrupt routines upon interrupt from MCP23S17
 
 } // namespace
 /*
