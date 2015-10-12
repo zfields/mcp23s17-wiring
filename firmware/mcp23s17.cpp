@@ -54,11 +54,10 @@ mcp23s17::attachInterrupt (
     ::SPI.transfer(0x00);
     ::SPI.transfer(0x08);
     ::SPI.transfer(0x00);
-    ::SPI.transfer(0x00);
+    ::SPI.transfer(0x08);
     ::SPI.transfer(0x00);
     ::digitalWrite(SS, HIGH);
 }
-
 
 mcp23s17::PinLatchValue
 mcp23s17::digitalRead (
