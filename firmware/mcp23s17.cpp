@@ -51,7 +51,7 @@ mcp23s17::attachInterrupt (
     ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     ::SPI.transfer(static_cast<uint8_t>(ControlRegister::GPINTENA));
     ::SPI.transfer(0x08);
-    ::SPI.transfer(0x00);
+    ::SPI.transfer(0x01);
     ::SPI.transfer(0x08);
     ::SPI.transfer(0x00);
     ::SPI.transfer(0x08);
