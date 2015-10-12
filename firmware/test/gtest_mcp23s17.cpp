@@ -781,7 +781,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinLessThanEightTHENAMas
 
     ResetSpi();
     gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
-    EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, static_cast<mcp23s17::PinLatchValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -795,7 +795,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinGreaterThanOrEqualToE
 
     ResetSpi();
     gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::HIGH);
-    EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, static_cast<mcp23s17::PinLatchValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -812,7 +812,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForLowOnPinLessThanEightTHENAMask
 
     ResetSpi();
     gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::LOW);
-    EXPECT_EQ(mcp23s17::PinLatchValue::LOW, static_cast<mcp23s17::PinLatchValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::UNSET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -829,7 +829,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForLowOnPinGreaterThanOrEqualToEi
 
     ResetSpi();
     gpio_x.digitalWrite(PIN, mcp23s17::PinLatchValue::LOW);
-    EXPECT_EQ(mcp23s17::PinLatchValue::LOW, static_cast<mcp23s17::PinLatchValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::UNSET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -850,7 +850,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinFromADifferentPortThanThePre
 
     ResetSpi();
     gpio_x.digitalWrite(10, mcp23s17::PinLatchValue::HIGH);
-    EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, static_cast<mcp23s17::PinLatchValue>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPIOA)] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((gpio_x.getControlRegister()[static_cast<uint8_t>(mcp23s17::ControlRegister::GPIOA)] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -871,7 +871,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinFromTheSamePortAsAPre
 
     ResetSpi();
     gpio_x.digitalWrite(10, mcp23s17::PinLatchValue::HIGH);
-    EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, static_cast<mcp23s17::PinLatchValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -895,7 +895,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForLowOnPinFromTheSamePortAsAPrev
 
     ResetSpi();
     gpio_x.digitalWrite(10, mcp23s17::PinLatchValue::LOW);
-    EXPECT_EQ(mcp23s17::PinLatchValue::HIGH, static_cast<mcp23s17::PinLatchValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(2, _index);
 }
 
@@ -1193,7 +1193,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledForLowOnPinLessThanEightTHENAM
 
     ResetSpi();
     gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::HIGH);
-    EXPECT_EQ(mcp23s17::InterruptMode::HIGH, static_cast<mcp23s17::InterruptMode>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION) & 0x01));
     ASSERT_LT(7, _index);
 }
 
