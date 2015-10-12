@@ -56,10 +56,10 @@ class mcp23s17 {
 
     /// \brief Interrupt Mode
     enum class InterruptMode {
-        CHANGE = 0,
+        LOW = 0,
+        HIGH = 1,
+        CHANGE,
         FALLING,
-        HIGH,
-        LOW,
         RISING,
     };
 
