@@ -49,6 +49,7 @@ mcp23s17::attachInterrupt (
     // Three bytes are required to update a single register. Therefore, if a comparison-based interrupt is requested, then both ports of all three registers are written at once to optimize the transfer by one byte. Otherwise, if a change-based interrupt is requested, then it is more efficient to write two transactions to the to the specific ports and registers.
     ::digitalWrite(SS, LOW);
     ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
+    ::SPI.transfer(static_cast<uint8_t>(ControlRegister::GPINTENA));
     ::digitalWrite(SS, HIGH);
 }
 
