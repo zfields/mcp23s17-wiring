@@ -1094,7 +1094,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENCorrespondingCallbackIsSto
     mcp23s17::isr_t interrupt_service_routine = [](){};
 
     ASSERT_EQ(nullptr, gpio_x.getInterruptServiceRoutines()[PIN]);
-    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
 
     EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[PIN]);
 }
@@ -1104,11 +1104,11 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledWithPinGreaterThanOrEqualToPin
     mcp23s17::isr_t interrupt_service_routine = [](){};
 
     for ( int i = 0 ; i < mcp23s17::PIN_COUNT ; ++i ) {
-        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
     }
 
     for ( int i = mcp23s17::PIN_COUNT ; i < 256 ; ++i ) {
-        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
         for ( int j = 0 ; j < mcp23s17::PIN_COUNT ; ++j ) {
             EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[j]) << "Error at index <" << j << ">!";
         }
@@ -1120,11 +1120,11 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledWithNullFunctionPointerTHENInt
     mcp23s17::isr_t interrupt_service_routine = [](){};
 
     for ( int i = 0 ; i < mcp23s17::PIN_COUNT ; ++i ) {
-        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+        gpio_x.attachInterrupt(i, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
     }
 
     for ( int i = 0 ; i < mcp23s17::PIN_COUNT ; ++i ) {
-        gpio_x.attachInterrupt(i, nullptr, mcp23s17::InterruptMode::CHANGE);
+        gpio_x.attachInterrupt(i, nullptr, mcp23s17::InterruptMode::LOW);
         EXPECT_EQ(interrupt_service_routine, gpio_x.getInterruptServiceRoutines()[i]) << "Error at index <" << i << ">!";
     }
 }
@@ -1135,7 +1135,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENTheCallersChipSelectPinIsP
     mcp23s17::isr_t interrupt_service_routine = [](){};
 
     ResetSpi();
-    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
     EXPECT_EQ(MOCK::PinTransition::HIGH_TO_LOW, MOCK::getPinTransition(SS)[0]);
     EXPECT_EQ(MOCK::PinTransition::LOW_TO_HIGH, MOCK::getPinTransition(SS)[1]);
     ASSERT_EQ(MOCK::PinTransition::NO_TRANSITION, MOCK::getPinTransition(SS)[2]);
@@ -1148,7 +1148,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENATransactionIsSentToTheHar
     mcp23s17::isr_t interrupt_service_routine = [](){};
 
     ResetSpi();
-    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
     EXPECT_EQ(gpio_x.getSpiBusAddress(), (_spi_transaction[0] & 0xFE));
     ASSERT_LT(0, _index);
 }
@@ -1159,7 +1159,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledTHENAWriteTransactionIsSent) {
     mcp23s17::isr_t interrupt_service_routine = [](){};
 
     ResetSpi();
-    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
     EXPECT_EQ(mcp23s17::RegisterTransaction::WRITE, static_cast<mcp23s17::RegisterTransaction>(_spi_transaction[0] & 0x01));
     ASSERT_LT(0, _index);
 }
