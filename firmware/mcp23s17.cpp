@@ -53,7 +53,7 @@ mcp23s17::attachInterrupt (
     ::SPI.transfer(0x08);
     ::SPI.transfer(0x01);
     ::SPI.transfer(0x08);
-    ::SPI.transfer(0x00);
+    ::SPI.transfer(0x01);
     ::SPI.transfer(0x08);
     ::SPI.transfer(0x00);
     ::digitalWrite(SS, HIGH);
