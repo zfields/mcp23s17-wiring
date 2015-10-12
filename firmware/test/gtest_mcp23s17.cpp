@@ -1245,6 +1245,18 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledForHIGHOnPinGreaterThanOrEqual
     ASSERT_LT(7, _index);
 }
 
+TEST_F(MockSPITransfer, attachInterrupt$WHENCalledForHIGHOnPinGreaterThanOrEqualToEightTHENAMaskWithTheSpecifiedBitSetIsSentToINTCONB) {
+    const uint8_t BIT_POSITION = 0;
+    const uint8_t PIN = 8;
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    mcp23s17::isr_t interrupt_service_routine = [](){};
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN, interrupt_service_routine, mcp23s17::InterruptMode::HIGH);
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[7] >> BIT_POSITION) & 0x01));
+    ASSERT_LT(7, _index);
+}
+
 //TODO: invokeInterruptServiceRoutine() - Function to call interrupt routines upon interrupt from MCP23S17
 } // namespace
 /*
