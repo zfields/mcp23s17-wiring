@@ -54,12 +54,12 @@ mcp23s17::attachInterrupt (
     ::SPI.transfer(0x01);
     ::SPI.transfer(0x08);
     ::SPI.transfer(0x01);
-    if ( InterruptMode::CHANGE == mode_ ) {
-        ::SPI.transfer(0x00);
-        ::SPI.transfer(0x01);
-    } else {
+    if ( InterruptMode::HIGH == mode_ ) {
         ::SPI.transfer(0x08);
         ::SPI.transfer(0x01);
+    } else {
+        ::SPI.transfer(0x00);
+        ::SPI.transfer(0x00);
     }
     ::digitalWrite(SS, HIGH);
 }
