@@ -2,3 +2,4 @@
 gtest_mcp23s17
 MOCK_spi
 *.layout
+*.cscope*

@@ -50,22 +50,22 @@ mcp23s17::attachInterrupt (
     ::digitalWrite(SS, LOW);
     ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     ::SPI.transfer(static_cast<uint8_t>(ControlRegister::GPINTENA));
-    ::SPI.transfer(0x08);
-    ::SPI.transfer(0x01);
+    ::SPI.transfer(1 << pin_);  // GPINTENA
+    ::SPI.transfer(1 << (pin_ % 8));  // GPINTENB
     if ( InterruptMode::HIGH == mode_ ) {
-        ::SPI.transfer(0x08);
-        ::SPI.transfer(0x01);
-        ::SPI.transfer(0x08);
-        ::SPI.transfer(0x01);
+        ::SPI.transfer(1 << pin_);  // DEFVALA
+        ::SPI.transfer(1 << (pin_ % 8));  // DEFVALB
+        ::SPI.transfer(1 << pin_);  // INTCONA
+        ::SPI.transfer(1 << (pin_ % 8));  // INTCONB
     } else {
-        ::SPI.transfer(0x00);
-        ::SPI.transfer(0x00);
+        ::SPI.transfer(0x00);  // DEFVALA
+        ::SPI.transfer(0x00);  // DEFVALB
         if ( InterruptMode::CHANGE == mode_ ) {
-            ::SPI.transfer(0x00);
-            ::SPI.transfer(0x00);
+            ::SPI.transfer(0x00);  // INTCONA
+            ::SPI.transfer(0x00);  // INTCONB
         } else {
-            ::SPI.transfer(0x08);
-            ::SPI.transfer(0x01);
+            ::SPI.transfer(1 << pin_);  // INTCONA
+            ::SPI.transfer(1 << (pin_ % 8));  // INTCONB
         }
     }
     ::digitalWrite(SS, HIGH);
