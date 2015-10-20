@@ -42,15 +42,22 @@ mcp23s17::attachInterrupt (
     const isr_t interrupt_service_routine_,
     const InterruptMode mode_
 ) {
+    uint16_t interrupt_enable_cache(0x0000);
+
     //if ( pin_ >= PIN_COUNT ) { return; }
     //if ( !interrupt_service_routine_ ) { return; }
     _interrupt_service_routines[pin_] = interrupt_service_routine_;
+
+    // Check cache for existing data
+    interrupt_enable_cache = _control_register[static_cast<uint8_t>(ControlRegister::GPINTENA)];
+    interrupt_enable_cache |= (1 << pin_);
+    _control_register[static_cast<uint8_t>(ControlRegister::GPINTENA)] = interrupt_enable_cache;
 
     // Three bytes are required to update a single register. Therefore, if a comparison-based interrupt is requested, then both ports of all three registers are written at once to optimize the transfer by one byte. Otherwise, if a change-based interrupt is requested, then it is more efficient to write two transactions to the to the specific ports and registers.
     ::digitalWrite(SS, LOW);
     ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     ::SPI.transfer(static_cast<uint8_t>(ControlRegister::GPINTENA));
-    ::SPI.transfer(1 << pin_);  // GPINTENA
+    ::SPI.transfer(interrupt_enable_cache);  // GPINTENA
     ::SPI.transfer(1 << (pin_ % 8));  // GPINTENB
     if ( InterruptMode::HIGH == mode_ ) {
         ::SPI.transfer(1 << pin_);  // DEFVALA
@@ -121,7 +128,7 @@ mcp23s17::digitalWrite (
     // Check to see if device is in the proper state
     if ( PinMode::INPUT == static_cast<PinMode>((_control_register[static_cast<uint8_t>(direction_register)] >> bit_pos) & 0x01) ) { return; }
 
-    // Check cache for exisiting data
+    // Check cache for existing data
     registry_value = _control_register[static_cast<uint8_t>(latch_register)];
     if ( PinLatchValue::LOW == value_ ) {
         registry_value &= ~bit_mask;
@@ -162,7 +169,7 @@ mcp23s17::pinMode (
         pullup_register = ControlRegister::GPPUB;
     }
 
-    // Check cache for exisiting data
+    // Check cache for existing data
     latch_register_cache = _control_register[static_cast<uint8_t>(latch_register)];
     pullup_register_cache = _control_register[static_cast<uint8_t>(pullup_register)];
     switch ( mode_ ) {
