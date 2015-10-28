@@ -300,7 +300,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinGreaterThanOrEqualT
     }
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledForOutputOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENOutputPinIsSetOnPortATHENItPersistsOnSubsequentCall) {
     const uint8_t PIN = 7;
     const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
@@ -315,7 +315,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForOutputOnPinFromADifferentPortThanTh
     ASSERT_LT(2, _index);
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledForOutputOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENOutputPinIsSetOnPortBTHENItPersistsOnSubsequentCall) {
     const uint8_t PIN = 8;
     const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
@@ -477,7 +477,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinGreaterThanOrEqualT
     }
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinOnPullupRegisterIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENInputPullupPinIsSetOnPortATHENItPersistsOnSubsequentCall) {
     const uint8_t PIN = 7;
     const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
@@ -499,7 +499,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromADifferentPortT
     ASSERT_LT(5, _index);
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledForInputPullupOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinOnPullupRegisterIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENInputPullupPinIsSetOnPortBTHENItPersistsOnSubsequentCall) {
     const uint8_t PIN1 = 8;
     const uint8_t PIN2 = 10;
     const uint8_t BIT_POSITION1 = PIN1 % 8;
@@ -634,7 +634,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinGreaterThanOrEqualToEight
     }
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinOnPullupRegisterIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENInputPinIsSetOnPortATHENInputPullupPersistsOnSubsequentCall) {
     const uint8_t PIN = 7;
     const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
@@ -662,7 +662,7 @@ TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromADifferentPortThanThe
     ASSERT_LT(5, _index);
 }
 
-TEST_F(MockSPITransfer, pinMode$WHENCalledForInputOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinOnPullupRegisterIsNotDisturbed) {
+TEST_F(MockSPITransfer, pinMode$WHENInputPinIsSetOnPortBTHENInputPullupPersistsOnSubsequentCall) {
     const uint8_t PIN = 8;
     const uint8_t BIT_POSITION = PIN % 8;
     TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
@@ -868,7 +868,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledForLowOnPinGreaterThanOrEqualToEi
     }
 }
 
-TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinFromADifferentPortThanThePreviousCallTHENTheOriginalPinIsNotDisturbed) {
+TEST_F(MockSPITransfer, digitalWrite$WHENPinIsSetOnPortATHENItPersistsOnSubsequentCall) {
     const uint8_t PIN1 = 7;
     const uint8_t PIN2 = 10;
     const uint8_t BIT_POSITION1 = PIN1 % 8;
@@ -890,7 +890,7 @@ TEST_F(MockSPITransfer, digitalWrite$WHENCalledOnPinFromADifferentPortThanThePre
     ASSERT_LT(2, _index);
 }
 
-TEST_F(MockSPITransfer, digitalWrite$WHENCalledForHighOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinIsNotDisturbed) {
+TEST_F(MockSPITransfer, digitalWrite$WHENPinIsSetOnPortBTHENItPersistsOnSubsequentCall) {
     const uint8_t PIN1 = 8;
     const uint8_t PIN2 = 10;
     const uint8_t BIT_POSITION1 = PIN1 % 8;
@@ -1388,7 +1388,7 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENCalledForLOWOnPinGreaterThanOrEqualT
     }
 }
 
-TEST_F(MockSPITransfer, attachInterrupt$WHENSetOnPinFromTheSamePortAsAPreviousCallTHENTheOriginalPinOnInterruptRegisterIsNotDisturbed) {
+TEST_F(MockSPITransfer, attachInterrupt$WHENEnablePinIsSetOnPortATHENItPersistsOnSubsequentCall) {
     const uint8_t PIN1 = 3;
     const uint8_t PIN2 = 5;
     const uint8_t BIT_POSITION1 = (PIN1 % 8);
@@ -1405,6 +1405,26 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENSetOnPinFromTheSamePortAsAPreviousCa
     gpio_x.attachInterrupt(PIN2, interrupt_service_routine, mcp23s17::InterruptMode::HIGH);
     ASSERT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION2) & 0x01));
     EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION1) & 0x01));
+    ASSERT_LT(7, _index);
+}
+
+TEST_F(MockSPITransfer, attachInterrupt$WHENEnablePinIsSetOnPortBTHENItPersistsOnSubsequentCall) {
+    const uint8_t PIN1 = 8;
+    const uint8_t PIN2 = 3;
+    const uint8_t BIT_POSITION1 = (PIN1 % 8);
+    const uint8_t BIT_POSITION2 = (PIN2 % 8);
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    mcp23s17::isr_t interrupt_service_routine = [](){};
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN1, interrupt_service_routine, mcp23s17::InterruptMode::HIGH);
+    ASSERT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[3] >> BIT_POSITION1) & 0x01));
+    ASSERT_LT(7, _index);
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN2, interrupt_service_routine, mcp23s17::InterruptMode::HIGH);
+    ASSERT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[2] >> BIT_POSITION2) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[3] >> BIT_POSITION1) & 0x01));
     ASSERT_LT(7, _index);
 }
 

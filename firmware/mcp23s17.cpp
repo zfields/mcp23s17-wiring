@@ -50,15 +50,17 @@ mcp23s17::attachInterrupt (
 
     // Check cache for existing data
     interrupt_enable_cache = _control_register[static_cast<uint8_t>(ControlRegister::GPINTENA)];
+    interrupt_enable_cache |= (_control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] << 8);
     interrupt_enable_cache |= (1 << pin_);
     _control_register[static_cast<uint8_t>(ControlRegister::GPINTENA)] = interrupt_enable_cache;
+    _control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] = (interrupt_enable_cache >> 8);
 
     // Three bytes are required to update a single register. Therefore, if a comparison-based interrupt is requested, then both ports of all three registers are written at once to optimize the transfer by one byte. Otherwise, if a change-based interrupt is requested, then it is more efficient to write two transactions to the to the specific ports and registers.
     ::digitalWrite(SS, LOW);
     ::SPI.transfer(_SPI_BUS_ADDRESS | static_cast<uint8_t>(RegisterTransaction::WRITE));
     ::SPI.transfer(static_cast<uint8_t>(ControlRegister::GPINTENA));
     ::SPI.transfer(interrupt_enable_cache);  // GPINTENA
-    ::SPI.transfer(1 << (pin_ % 8));  // GPINTENB
+    ::SPI.transfer(interrupt_enable_cache >> 8);  // GPINTENB
     if ( InterruptMode::HIGH == mode_ ) {
         ::SPI.transfer(1 << pin_);  // DEFVALA
         ::SPI.transfer(1 << (pin_ % 8));  // DEFVALB
