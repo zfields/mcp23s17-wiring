@@ -42,13 +42,21 @@ mcp23s17::attachInterrupt (
     const isr_t interrupt_service_routine_,
     const InterruptMode mode_
 ) {
+    uint16_t interrupt_control_cache(0x0000);
     uint16_t interrupt_enable_cache(0x0000);
 
     //if ( pin_ >= PIN_COUNT ) { return; }
     //if ( !interrupt_service_routine_ ) { return; }
     _interrupt_service_routines[pin_] = interrupt_service_routine_;
 
-    // Check cache for existing data
+    // Check control cache for existing data
+    interrupt_control_cache = _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)];
+    //interrupt_control_cache |= (_control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] << 8);
+    interrupt_control_cache |= (1 << pin_);
+    _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)] = interrupt_control_cache;
+    //_control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] = (interrupt_control_cache >> 8);
+
+    // Check enable cache for existing data
     interrupt_enable_cache = _control_register[static_cast<uint8_t>(ControlRegister::GPINTENA)];
     interrupt_enable_cache |= (_control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] << 8);
     interrupt_enable_cache |= (1 << pin_);
@@ -64,7 +72,7 @@ mcp23s17::attachInterrupt (
     if ( InterruptMode::HIGH == mode_ ) {
         ::SPI.transfer(1 << pin_);  // DEFVALA
         ::SPI.transfer(1 << (pin_ % 8));  // DEFVALB
-        ::SPI.transfer(1 << pin_);  // INTCONA
+        ::SPI.transfer(interrupt_control_cache);  // INTCONA
         ::SPI.transfer(1 << (pin_ % 8));  // INTCONB
     } else {
         ::SPI.transfer(0x00);  // DEFVALA
