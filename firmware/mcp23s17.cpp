@@ -49,19 +49,19 @@ mcp23s17::attachInterrupt (
     //if ( !interrupt_service_routine_ ) { return; }
     _interrupt_service_routines[pin_] = interrupt_service_routine_;
 
-    // Check control cache for existing data
-    interrupt_control_cache = _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)];
-    //interrupt_control_cache |= (_control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] << 8);
-    interrupt_control_cache |= (1 << pin_);
-    _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)] = interrupt_control_cache;
-    //_control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] = (interrupt_control_cache >> 8);
-
     // Check enable cache for existing data
     interrupt_enable_cache = _control_register[static_cast<uint8_t>(ControlRegister::GPINTENA)];
     interrupt_enable_cache |= (_control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] << 8);
     interrupt_enable_cache |= (1 << pin_);
     _control_register[static_cast<uint8_t>(ControlRegister::GPINTENA)] = interrupt_enable_cache;
     _control_register[static_cast<uint8_t>(ControlRegister::GPINTENB)] = (interrupt_enable_cache >> 8);
+
+    // Check control cache for existing data
+    interrupt_control_cache = _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)];
+    interrupt_control_cache |= (_control_register[static_cast<uint8_t>(ControlRegister::INTCONB)] << 8);
+    interrupt_control_cache |= (1 << pin_);
+    _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)] = interrupt_control_cache;
+    _control_register[static_cast<uint8_t>(ControlRegister::INTCONB)] = (interrupt_control_cache >> 8);
 
     // Three bytes are required to update a single register. Therefore, if a comparison-based interrupt is requested, then both ports of all three registers are written at once to optimize the transfer by one byte. Otherwise, if a change-based interrupt is requested, then it is more efficient to write two transactions to the to the specific ports and registers.
     ::digitalWrite(SS, LOW);
@@ -73,7 +73,7 @@ mcp23s17::attachInterrupt (
         ::SPI.transfer(1 << pin_);  // DEFVALA
         ::SPI.transfer(1 << (pin_ % 8));  // DEFVALB
         ::SPI.transfer(interrupt_control_cache);  // INTCONA
-        ::SPI.transfer(1 << (pin_ % 8));  // INTCONB
+        ::SPI.transfer(interrupt_control_cache >> 8);  // INTCONB
     } else {
         ::SPI.transfer(0x00);  // DEFVALA
         ::SPI.transfer(0x00);  // DEFVALB
