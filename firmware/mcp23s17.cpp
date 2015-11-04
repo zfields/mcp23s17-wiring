@@ -83,7 +83,7 @@ mcp23s17::attachInterrupt (
         ::SPI.transfer(0x00);  // DEFVALB
         if ( InterruptMode::CHANGE == mode_ ) {
             ::SPI.transfer(interrupt_control_cache);  // INTCONA
-            ::SPI.transfer(0x00);  // INTCONB
+            ::SPI.transfer(interrupt_control_cache >> 8);  // INTCONB
         } else {
             ::SPI.transfer(interrupt_control_cache);  // INTCONA
             ::SPI.transfer(interrupt_control_cache >> 8);  // INTCONB
