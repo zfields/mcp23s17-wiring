@@ -1508,6 +1508,31 @@ TEST_F(MockSPITransfer, attachInterrupt$WHENInterruptModeIsSetToLowOnPortBTHENCo
     ASSERT_LT(7, _index);
 }
 
+TEST_F(MockSPITransfer, attachInterrupt$WHENInterruptModeIsSetToChangeOnPortATHENControlPinPersistsOnSubsequentCall) {
+    const uint8_t PIN1 = 3;
+    const uint8_t PIN2 = 5;
+    const uint8_t BIT_POSITION1 = (PIN1 % 8);
+    const uint8_t BIT_POSITION2 = (PIN2 % 8);
+    TC_mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_6);
+    mcp23s17::isr_t interrupt_service_routine = [](){};
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN1, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
+    ASSERT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[6] >> BIT_POSITION1) & 0x01));
+    ASSERT_LT(7, _index);
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN2, interrupt_service_routine, mcp23s17::InterruptMode::LOW);
+    ASSERT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[6] >> BIT_POSITION2) & 0x01));
+    ASSERT_LT(7, _index);
+
+    ResetSpi();
+    gpio_x.attachInterrupt(PIN2, interrupt_service_routine, mcp23s17::InterruptMode::CHANGE);
+    ASSERT_EQ(BitValue::UNSET, static_cast<BitValue>((_spi_transaction[6] >> BIT_POSITION2) & 0x01));
+    EXPECT_EQ(BitValue::SET, static_cast<BitValue>((_spi_transaction[6] >> BIT_POSITION1) & 0x01));
+    ASSERT_LT(7, _index);
+}
+
 //TODO: invokeInterruptServiceRoutine() - Function to call interrupt routines upon interrupt from MCP23S17
 } // namespace
 /*

@@ -59,7 +59,11 @@ mcp23s17::attachInterrupt (
     // Check control cache for existing data
     interrupt_control_cache = _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)];
     interrupt_control_cache |= (_control_register[static_cast<uint8_t>(ControlRegister::INTCONB)] << 8);
-    interrupt_control_cache |= (1 << pin_);
+    if ( InterruptMode::CHANGE != mode_ ) {
+        interrupt_control_cache |= (1 << pin_);
+    } else {
+        interrupt_control_cache &= ~(1 << pin_);
+    }
     _control_register[static_cast<uint8_t>(ControlRegister::INTCONA)] = interrupt_control_cache;
     _control_register[static_cast<uint8_t>(ControlRegister::INTCONB)] = (interrupt_control_cache >> 8);
 
@@ -78,7 +82,7 @@ mcp23s17::attachInterrupt (
         ::SPI.transfer(0x00);  // DEFVALA
         ::SPI.transfer(0x00);  // DEFVALB
         if ( InterruptMode::CHANGE == mode_ ) {
-            ::SPI.transfer(0x00);  // INTCONA
+            ::SPI.transfer(interrupt_control_cache);  // INTCONA
             ::SPI.transfer(0x00);  // INTCONB
         } else {
             ::SPI.transfer(interrupt_control_cache);  // INTCONA
