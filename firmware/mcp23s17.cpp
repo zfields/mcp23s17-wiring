@@ -81,7 +81,7 @@ mcp23s17::attachInterrupt (
             ::SPI.transfer(0x00);  // INTCONA
             ::SPI.transfer(0x00);  // INTCONB
         } else {
-            ::SPI.transfer(1 << pin_);  // INTCONA
+            ::SPI.transfer(interrupt_control_cache);  // INTCONA
             ::SPI.transfer(1 << (pin_ % 8));  // INTCONB
         }
     }
