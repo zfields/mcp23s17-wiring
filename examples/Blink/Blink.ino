@@ -1,7 +1,7 @@
-  /****************/
- /* Hello Blinky */
-/****************/
-#include "mcp23s17/mcp23s17.h"
+  /*********/
+ /* Blink */
+/*********/
+#include "mcp23s17.h"
 
 const int LED_PIN = 7;
 mcp23s17 gpio_x(mcp23s17::HardwareAddress::HW_ADDR_0); // All addressing pins set to GND
